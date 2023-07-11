@@ -1,0 +1,7 @@
+name: cqn
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bioconductor-cqn=1.44.0

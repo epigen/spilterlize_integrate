@@ -1,0 +1,9 @@
+name: ggplot
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - r-ggplot2=3.4.2
+  - r-patchwork=1.1.2
+  - r-reshape2=1.4.4

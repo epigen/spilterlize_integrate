@@ -1,0 +1,13 @@
+name: reComBat
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.10
+  - scikit-learn=1.3.0
+  - pandas=1.5.3
+  - numpy=1.25
+  - pip
+  - pip:
+    - recombat

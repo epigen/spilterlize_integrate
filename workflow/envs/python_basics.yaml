@@ -1,0 +1,12 @@
+name: python_basics
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.10
+  - pandas=1.5.3
+  - numpy=1.25
+  - matplotlib=3.7.2
+  - seaborn=0.12.2
+  - statsmodels=0.14.0
