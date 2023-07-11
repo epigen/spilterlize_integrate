@@ -71,16 +71,16 @@ all_data = ['counts','filtered'] + norm_methods + integration_data + transformed
 rule all:
     input:
         # SPLIT
-        expand(os.path.join(result_path, '{split}','counts.csv'), split=splits),
-        expand(os.path.join(result_path, '{split}','annotation.csv'), split=splits),
+#         expand(os.path.join(result_path, '{split}','counts.csv'), split=splits),
+#         expand(os.path.join(result_path, '{split}','annotation.csv'), split=splits),
         # FILTER
-        expand(os.path.join(result_path, '{split}','filtered.csv'), split=splits),
+#         expand(os.path.join(result_path, '{split}','filtered.csv'), split=splits),
         # NORMALIZE
-        expand(os.path.join(result_path, '{split}','{method}.csv'), split=splits, method=norm_methods),
+#         expand(os.path.join(result_path, '{split}','{method}.csv'), split=splits, method=norm_methods),
         # INTEGRATE
-        expand(os.path.join(result_path, '{split}','{method}.csv'), split=splits, method=integration_data),
+#         expand(os.path.join(result_path, '{split}','{method}.csv'), split=splits, method=integration_data),
         # HVF
-        expand(os.path.join(result_path, '{split}','{transformed_data}.csv'), split=splits, transformed_data=transformed_data),
+#         expand(os.path.join(result_path, '{split}','{transformed_data}.csv'), split=splits, transformed_data=transformed_data),
         # VISUALIZE
         expand(os.path.join(result_path, '{split}','plots','{all_data}.png'), split=splits, all_data=all_data),
         # config

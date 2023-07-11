@@ -51,7 +51,14 @@ rule select_hvf:
         data = os.path.join(result_path,'{split}','{transformed_data}.csv'),
     output:
         hvf_data = os.path.join(result_path,'{split}','{transformed_data}_HVF.csv'),
-        hvf_plot = os.path.join(result_path,'{split}','plots','{transformed_data}_HVF_selection.png'),
+        hvf_plot = report(os.path.join(result_path,'{split}','plots','{transformed_data}_HVF_selection.png'),
+                          caption="../report/HVF_plot.rst",
+                          category="{}_{}".format(config["project_name"], module_name),
+                          subcategory="{split}",
+                          labels={
+                              "name": "{transformed_data}",
+                              "type": "HVF selection"
+                          }),
     params:
         partition = config.get("partition"),
     threads: config.get("threads", 1)

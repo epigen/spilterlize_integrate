@@ -1,10 +1,10 @@
 
-# normalize by TMM using edgeR::CalcNormFactors
+# normalize by configured methods using edgeR::CalcNormFactors
 rule norm_edgeR:
     input:
         filtered_counts = os.path.join(result_path,'{split}','filtered.csv'),
     output:
-        normalized_counts = expand(os.path.join(result_path,'{{split}}','norm{method}.csv'), method=norm_edgeR_methods),
+        normalized_counts = expand(os.path.join(result_path,'{{split}}','{method}.csv'), method=norm_edgeR_methods),
     params:
         partition = config.get("partition"),
         result_path = result_path,
@@ -27,7 +27,14 @@ rule norm_cqn:
         annotation = os.path.join(result_path,'{split}','annotation.csv'),
     output:
         normalized_counts = os.path.join(result_path,'{split}','normCQN.csv'),
-        cqn_plot = os.path.join(result_path,'{split}','plots','normCQN_QRfit.png'),
+        cqn_plot = report(os.path.join(result_path,'{split}','plots','normCQN_QRfit.png'),
+                          caption="../report/CQN_plot.rst", 
+                          category="{}_{}".format(config["project_name"], module_name),
+                          subcategory="{split}",
+                          labels={
+                              "name": "normCQN",
+                              "type": "QR fit plot"
+                          }),
     params:
         partition = config.get("partition"),
         split = lambda w: "{}".format(w.split),

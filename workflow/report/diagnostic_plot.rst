@@ -1,0 +1,1 @@
+Diagnostic plots of data split {{snakemake.wildcards["split"]}} transformed by {{snakemake.wildcards["label"]}}, namely mean-variance relationship, density of log1p-values, boxplots of log1p-values, and principal component analysis plots.

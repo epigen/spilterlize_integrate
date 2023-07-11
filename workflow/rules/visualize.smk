@@ -5,7 +5,14 @@ rule plot_diagnostics:
         data = os.path.join(result_path,'{split}','{label}.csv'),
         annotation = os.path.join(result_path,'{split}','annotation.csv'),
     output:
-        plot = os.path.join(result_path,'{split}','plots','{label}.png'),
+        plot = report(os.path.join(result_path,'{split}','plots','{label}.png'),
+                      caption="../report/diagnostic_plot.rst", 
+                      category="{}_{}".format(config["project_name"], module_name),
+                      subcategory="{split}",
+                      labels={
+                          "name": "{label}",
+                          "type": "diagnostic plot"
+                      }),
     params:
         partition = config.get("partition"),
     threads: config.get("threads", 1)

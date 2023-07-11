@@ -1,7 +1,7 @@
 
 ##### RESOURCES #####
 partition: 'shortq'
-mem: '32000'
+mem: '8000'
 threads: 1
 
 
