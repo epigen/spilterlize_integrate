@@ -80,9 +80,9 @@ def visualize_results(df, hvf_idx, bins_n):
     plt.subplot(2, 2, 3)
     sns.scatterplot(data=df, x="means", y="dispersions_norm", rasterized=True, label='All features')
     sns.scatterplot(data=df.loc[hvf_idx,:], x="means", y="dispersions_norm", rasterized=True, color='red', label='Selected HVF')
-    plt.xlabel('Mean Expression')
+    plt.xlabel('Mean')
     plt.ylabel('Normalized Dispersion')
-    plt.title('Mean Expression vs Normalized Dispersion')
+    plt.title('Mean to Normalized Dispersion')
     plt.legend()
 
     # Plot of ranked normalized dispersion
