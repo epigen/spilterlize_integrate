@@ -10,4 +10,4 @@ dependencies:
   - numpy=1.25
   - pip
   - pip:
-    - recombat
+    - recombat==0.1.4

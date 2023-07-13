@@ -3,7 +3,7 @@
 
 cff-version: 1.2.0
 title: >-
-  Snakemake Workflow to Split, Filter, Normalize and Integrate Sequencing Data.
+  Workflow tp Split, Filter, Normalize and Integrate Sequencing Data
 message: >-
   If you use this software, please cite it using the
   metadata from this file.
@@ -19,14 +19,18 @@ authors:
     affiliation: CeMM Research Center for Molecular Medicine
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.7810621
+    value: -
     description: >-
       This DOI represents all versions, and will always
       resolve to the latest one.
 repository-code: 'https://github.com/epigen/splilterlize_integrate'
 url: 'https://epigen.github.io/splilterlize_integrate/'
 abstract: >-
-  ...
+  A Snakemake workflow to split, filter, normalize, integrate
+  and select highly variable features of count matrices 
+  resulting from experiments with sequencing readout 
+  (e.g., RNA-seq, ATAC-seq, ChIP-seq,...) including 
+  diagnostic visualizations.
 keywords:
   - Bioinformatics
   - Workflow
