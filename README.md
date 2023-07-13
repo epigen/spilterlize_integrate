@@ -1,9 +1,11 @@
+[![DOI](https://zenodo.org/badge/659800258.svg)](https://zenodo.org/badge/latestdoi/659800258)
+
 #  <ins>Sp</ins>lit, F<ins>ilter</ins>, Norma<ins>lize</ins> and <ins>Integrate</ins> Sequencing Data
 A [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflow to split, filter, normalize, integrate and select highly variable features of count matrices resulting from experiments with sequencing readout (e.g., RNA-seq, ATAC-seq, ChIP-seq,...) including diagnostic visualizations documenting the respective data transformations. This often represents the first analysis after signal processing critically influencing all downstream analyses.
 
 This workflow adheres to the module specifications of [MR.PARETO](https://github.com/epigen/mr.pareto), an effort to augment research by modularizing (biomedical) data science. For more details and modules check out the project's repository.
 
-**If you use this workflow in a publication, please don't forget to give credits to the authors by citing it using this DOI (coming soon).**
+**If you use this workflow in a publication, please don't forget to give credit to the authors by citing it using this DOI [10.5281/zenodo.8144219](https://doi.org/10.5281/zenodo.8144219).**
 
 ![Workflow Rulegraph](./workflow/dags/rulegraph.svg)
 
@@ -71,7 +73,7 @@ __Highly Variable Feature (HVF) selection.__ Highly variable features (HVF) were
 
 __Visualization.__ The quality of the data and the effectiveness of the processing steps were assessed through the following visualizations (raw/filtered counts were log1p-normalized): the mean-variance relationship of all features, densities of log1p values per sample, boxplots of log1p values per sample, and Principal Component Analysis (PCA) plots. For the PCA plots, features with zero variance were removed beforehand and colored by `[visualization_parameters.annotate]`. The plots were generated using the R libraries ggplot2, reshape2, and patchwork`(ver)[ref]`.
 
-**The analyses and visualizations described here were performed using a publicly available Snakemake [ver] (ref) workflow [ref - cite this workflow here].**
+**The analyses and visualizations described here were performed using a publicly available Snakemake `[ver](ref)` workflow `(ver)` [10.5281/zenodo.8144219](https://doi.org/10.5281/zenodo.8144219).**
 
 # Features
 The workflow performs the following steps to produce the outlined results:
@@ -131,7 +133,7 @@ Detailed specifications can be found here [./config/README.md](./config/README.m
 # Links
 - [GitHub Repository](https://github.com/epigen/spilterlize_integrate/)
 - [GitHub Page](https://epigen.github.io/spilterlize_integrate/)
-- [Zenodo Repository (coming soon)]()
+- [Zenodo Repository](https://doi.org/10.5281/zenodo.8144219)
 - [Snakemake Workflow Catalog Entry](https://snakemake.github.io/snakemake-workflow-catalog?usage=epigen/spilterlize_integrate)
 
 # Resources
