@@ -1,4 +1,4 @@
-#  <ins>Spli</ins>t, F<ins>ilter</ins>, Norma<ins>lize</ins> and <ins>Integrate</ins> Sequencing Data
+#  <ins>Sp</ins>lit, F<ins>ilter</ins>, Norma<ins>lize</ins> and <ins>Integrate</ins> Sequencing Data
 A [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflow to split, filter, normalize, integrate and select highly variable features of count matrices resulting from experiments with sequencing readout (e.g., RNA-seq, ATAC-seq, ChIP-seq,...) including diagnostic visualizations documenting the respective data transformations. This often represents the first analysis after signal processing critically influencing all downstream analyses.
 
 This workflow adheres to the module specifications of [MR.PARETO](https://github.com/epigen/mr.pareto), an effort to augment research by modularizing (biomedical) data science. For more details and modules check out the project's repository.
@@ -47,7 +47,7 @@ This project wouldn't be possible without the following software and their depen
 
 
 # Methods
-This is a template for the Methods section of a scientific publication and is intended to serve as a starting point. Only retain paragraphs relevant to your analysis. References `[ref]` to the respective publications are curated in the software table above. Versions `(ver)` have to be read out from the respective conda environment specifications (`workflow/envs/*.yaml` file) or post execution in the result directory (`envs/splilterlize_integrate/*.yaml`). Parameters that have to be adapted depending on the data or workflow configurations are denoted in squared brackets e.g., `[X]`.
+This is a template for the Methods section of a scientific publication and is intended to serve as a starting point. Only retain paragraphs relevant to your analysis. References `[ref]` to the respective publications are curated in the software table above. Versions `(ver)` have to be read out from the respective conda environment specifications (`workflow/envs/*.yaml` file) or post execution in the result directory (`envs/spilterlize_integrate/*.yaml`). Parameters that have to be adapted depending on the data or workflow configurations are denoted in squared brackets e.g., `[X]`.
 
 __Split.__ The input data was split by `[split_by]`, with each split denoted by `[split_by]_{annotation_level}`. The complete data was retained in the "all" split. Sample filtering was achieved by removing sample rows from the annotation file or using `NA` in the respective annotation column. Annotations were also split and provided separately. The data was loaded, split, and saved using the Python library pandas `(ver)[ref]`.
 
@@ -129,10 +129,10 @@ Detailed specifications can be found here [./config/README.md](./config/README.m
 --- COMING SOON ---
 
 # Links
-- [GitHub Repository](https://github.com/epigen/splilterlize_integrate/)
-- [GitHub Page](https://epigen.github.io/splilterlize_integrate/)
+- [GitHub Repository](https://github.com/epigen/spilterlize_integrate/)
+- [GitHub Page](https://epigen.github.io/spilterlize_integrate/)
 - [Zenodo Repository (coming soon)]()
-- [Snakemake Workflow Catalog Entry](https://snakemake.github.io/snakemake-workflow-catalog?usage=epigen/splilterlize_integrate)
+- [Snakemake Workflow Catalog Entry](https://snakemake.github.io/snakemake-workflow-catalog?usage=epigen/spilterlize_integrate)
 
 # Resources
 - Recommended compatible [MR.PARETO](https://github.com/epigen/mr.pareto) modules

@@ -1,1 +1,1 @@
-`A Snakemake workflow to split, filter, normalize and integrate sequencing data. <https://github.com/epigen/splilterlize_integrate>`_.
+`A Snakemake workflow to split, filter, normalize and integrate sequencing data. <https://github.com/epigen/spilterlize_integrate>`_.

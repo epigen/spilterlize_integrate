@@ -23,8 +23,8 @@ identifiers:
     description: >-
       This DOI represents all versions, and will always
       resolve to the latest one.
-repository-code: 'https://github.com/epigen/splilterlize_integrate'
-url: 'https://epigen.github.io/splilterlize_integrate/'
+repository-code: 'https://github.com/epigen/spilterlize_integrate'
+url: 'https://epigen.github.io/spilterlize_integrate/'
 abstract: >-
   A Snakemake workflow to split, filter, normalize, integrate
   and select highly variable features of count matrices 
