@@ -51,13 +51,13 @@ mean_var_p <- ggplot(data.frame(data_mean, data_var), aes(x=data_mean, y=data_va
 # Create density plot of log-normalized counts per feature
 density_p <- ggplot(data_long, aes(x=counts, color=sample)) +
   geom_density() +
-  labs(x="Log-normalized Counts", title="Density of Log1p-Values per Sample") +
+  labs(x="Log-normalized Counts", title="Density of Log-normalized Counts per Sample") +
   theme_minimal() + guides(color="none")
 
 # Create boxplots of (log normalized) counts of all samples
 boxplots_p <- ggplot(data_long, aes(x=sample, y=counts, color=sample)) +
   geom_boxplot() +
-  labs(x="Sample", y="Log-normalized Counts", title="Boxplots of Log1p-Values per Sample") +
+  labs(x="Sample", y="Log-normalized Counts", title="Boxplots of Log-normalized Counts per Sample") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + guides(color="none")
 
