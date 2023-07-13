@@ -19,7 +19,7 @@ authors:
     affiliation: CeMM Research Center for Molecular Medicine
 identifiers:
   - type: doi
-    value: -
+    value: 
     description: >-
       This DOI represents all versions, and will always
       resolve to the latest one.
