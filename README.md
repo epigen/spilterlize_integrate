@@ -101,7 +101,7 @@ The workflow performs the following steps to produce the outlined results:
   - This is particularly useful when combining data from different experiments or sequencing runs.
 - Highly Variable Feature Selection (`*_HVF.csv`)
   - The top percentage of the most variable features is selected based on the binned normalized dispersion of each feature adapted from [Zheng (2017) Nature Communications](https://doi.org/10.1038/ncomms14049).
-  - These HVFs are often the most informative for downstream analyses such as clustering or differential expression, but smaller effects of interest could be removed.
+  - These HVFs are often the most informative for downstream analyses such as clustering or differential expression, but smaller effects of interest could be lost.
   - The selection is visualized by histograms before and after normalization, mean to normalized dispersion scatterplots, and a scatterplot of the ranked normalized dispersion always highlighting the selected features (`*_HVF_selection.png`).
 - Results (`{split}/*.csv`)
   - All transformed datasets are saved as CSV files and named by the applied methods, respectively.
