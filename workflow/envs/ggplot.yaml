@@ -8,3 +8,4 @@ dependencies:
   - r-patchwork=1.1.2
   - r-reshape2=1.4.4
   - r-data.table=1.15.2
+  - r-hexbin=1.28.3

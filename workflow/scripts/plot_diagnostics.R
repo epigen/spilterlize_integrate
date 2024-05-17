@@ -4,6 +4,7 @@ library("ggplot2")
 library("reshape2")
 library("patchwork")
 library("data.table")
+library("hexbin")
 
 ### configs
 set.seed(42)
@@ -47,9 +48,12 @@ data_var <- apply(data, 1, sd)
 
 # Create mean-variance plot
 mean_var_p <- ggplot(data.frame(data_mean, data_var), aes(x=data_mean, y=data_var)) +
-  geom_point(alpha=0.1, size=0.1) +
+#   geom_point(alpha=0.1, size=0.1) +
+  geom_hex() +
+  scale_fill_viridis_c(option="plasma", trans="log10", name=NULL, direction=-1) +
   labs(x="Mean", y="Standard Deviation", title="Mean-Variance Relationship") +
-  theme_minimal()
+  theme_minimal() +
+ theme(legend.position = c(0.9, 0.9), legend.key.size = unit(0.5, "cm"), legend.text = element_text(size=8))
 
 # Create density plot of log-normalized counts per feature
 density_p <- ggplot(data_long, aes(x=counts, color=sample)) +
@@ -59,7 +63,7 @@ density_p <- ggplot(data_long, aes(x=counts, color=sample)) +
 
 # Create boxplots of (log normalized) counts of all samples
 boxplots_p <- ggplot(data_long, aes(x=sample, y=counts, color=sample)) +
-  geom_boxplot() +
+  geom_boxplot(outlier.size=1, outlier.stroke = 0) +
   labs(x="Sample", y="Log-normalized Counts", title="Boxplots of Log-normalized Counts per Sample") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + guides(color="none")
