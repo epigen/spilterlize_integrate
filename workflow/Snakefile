@@ -14,9 +14,6 @@ module_name = "spilterlize_integrate"
 ##### set minimum snakemake version #####
 min_version("7.15.2")
 
-SDIR = os.path.realpath(os.path.dirname(srcdir("Snakefile")))
-shell.prefix(f"set -eo pipefail;")
-
 ##### setup report #####
 report: "report/workflow.rst"
 
