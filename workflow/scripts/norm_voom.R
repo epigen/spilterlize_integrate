@@ -12,6 +12,7 @@ data_path <- snakemake@input[["filtered_counts"]]
 
 # output
 result_path <- snakemake@output[["normalized_counts"]]
+plot_path <- snakemake@output[["voom_plot"]]
 
 # parameters
 split <- snakemake@params[["split"]]
@@ -37,6 +38,7 @@ dge <- calcNormFactors(dge,
                       )
 
 ### normalize data using VOOM
+png(plot_path, width = 4, height = 4, units = "in", res = 300)
 voom_results <- voom(counts = dge,
                      design = NULL,
                      #lib.size = NULL,
@@ -45,9 +47,10 @@ voom_results <- voom(counts = dge,
                      correlation = NULL,
                      weights = NULL,
                      span = voom_parameters[["span"]],
-                     plot = FALSE,
+                     plot = TRUE,
                      save.plot = FALSE
                     )
+dev.off()
 
 norm_data <- voom_results$E
     

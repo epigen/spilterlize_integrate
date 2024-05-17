@@ -55,6 +55,7 @@ rule norm_voom:
         filtered_counts = os.path.join(result_path,'{split}','filtered.csv'),
     output:
         normalized_counts = os.path.join(result_path,'{split}','normVOOM.csv'),
+        voom_plot = os.path.join(result_path,'{split}','normVOOM_mean_variance_trend.png'),
     params:
         partition = config.get("partition"),
         split = lambda w: "{}".format(w.split),
