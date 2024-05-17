@@ -6,3 +6,4 @@ channels:
 dependencies:
   - bioconductor-edger=3.32.1
   - bioconductor-limma=3.46.0
+  - r-data.table=1.15.2

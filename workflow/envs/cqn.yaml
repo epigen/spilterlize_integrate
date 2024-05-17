@@ -5,3 +5,4 @@ channels:
   - defaults
 dependencies:
   - bioconductor-cqn=1.44.0
+  - r-data.table=1.15.2

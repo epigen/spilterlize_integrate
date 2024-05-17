@@ -1,6 +1,7 @@
 
 ### load libraries
-library(edgeR)
+library("edgeR")
+library("data.table")
 
 ### configs
 
@@ -15,8 +16,10 @@ filtered_path <- snakemake@output[["filtered_counts"]]
 filter_parameters <- snakemake@params[["filter_parameters"]]
 
 ### load data
-data <- read.csv(file=file.path(data_path), row.names=1)
-annot <- read.csv(file=file.path(annotation_path), row.names=1)
+# data <- read.csv(file=file.path(data_path), row.names=1)
+# annot <- read.csv(file=file.path(annotation_path), row.names=1)
+data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
+annot <- data.frame(fread(file.path(annotation_path), header=TRUE), row.names=1)
 
 # set group variable
 if(filter_parameters[["group"]]!="NULL"){
@@ -37,7 +40,8 @@ keep.exprs <- filterByExpr(data,
 filtered <- data[keep.exprs,]
 
 # save data
-write.csv(filtered, file=file.path(filtered_path), row.names=TRUE)
+# write.csv(filtered, file=file.path(filtered_path), row.names=TRUE)
+fwrite(as.data.frame(filtered), file=file.path(filtered_path), row.names=TRUE)
 
 # print stats
 print(paste0("before: ",dim(data)[1]," x ",dim(data)[2]))

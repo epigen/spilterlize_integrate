@@ -1,6 +1,7 @@
 
 ### load libraries
-library(edgeR)
+library("edgeR")
+library("data.table")
 
 ### configs
 set.seed(42)
@@ -17,11 +18,13 @@ norm_parameters <- snakemake@config[["edgeR_parameters"]]
 feature_annotation_path <- snakemake@config[["feature_annotation"]]
 
 ### load data
-data <- read.csv(file=file.path(data_path), row.names=1)
+# data <- read.csv(file=file.path(data_path), row.names=1)
+data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
 
 # load subset feature annotation, if provided
 if(feature_annotation_path!=""){
-    feature_annotation <- read.csv(file=file.path(feature_annotation_path), row.names=1)
+#     feature_annotation <- read.csv(file=file.path(feature_annotation_path), row.names=1)
+    feature_annotation <- data.frame(fread(file.path(feature_annotation_path), header=TRUE), row.names=1)
     feature_annotation <- feature_annotation[rownames(data),]
 }
 
@@ -69,5 +72,6 @@ for(method in norm_parameters[["method"]]){
     }
     
     # save normalized data
-    write.csv(norm_data, file=file.path(result_path,split,paste0("norm",method,".csv")), row.names=TRUE)
+#     write.csv(norm_data, file=file.path(result_path,split,paste0("norm",method,".csv")), row.names=TRUE)
+    fwrite(as.data.frame(norm_data), file=file.path(result_path,split,paste0("norm",method,".csv")), row.names=TRUE)
 }

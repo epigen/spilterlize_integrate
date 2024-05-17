@@ -1,7 +1,8 @@
 
 ### load libraries
-library(limma)
-library(edgeR)
+library("limma")
+library("edgeR")
+library("data.table")
 
 ### configs
 set.seed(42)
@@ -20,7 +21,8 @@ edgeR_parameters <- snakemake@config[["edgeR_parameters"]]
 voom_parameters <- snakemake@config[["voom_parameters"]]
 
 ### load data
-data <- read.csv(file=file.path(data_path), row.names=1)
+# data <- read.csv(file=file.path(data_path), row.names=1)
+data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
 
 # calculate normalization factors (normalized library size factors) if configured
 dge <- DGEList(data)
@@ -50,4 +52,5 @@ voom_results <- voom(counts = dge,
 norm_data <- voom_results$E
     
 # save normalized data
-write.csv(norm_data, file=file.path(result_path), row.names=TRUE)
+# write.csv(norm_data, file=file.path(result_path), row.names=TRUE)
+fwrite(as.data.frame(norm_data), file=file.path(result_path), row.names=TRUE)

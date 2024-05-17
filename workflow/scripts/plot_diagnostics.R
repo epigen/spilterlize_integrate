@@ -1,8 +1,9 @@
 
 ### load libraries
-library(ggplot2)
-library(reshape2)
-library(patchwork)
+library("ggplot2")
+library("reshape2")
+library("patchwork")
+library("data.table")
 
 ### configs
 set.seed(42)
@@ -20,8 +21,10 @@ split <- snakemake@wildcards[["split"]]
 label <- snakemake@wildcards[["label"]]
 
 ### load data
-data <- read.csv(file=file.path(data_path), row.names=1)
-annot <- read.csv(file=file.path(annot_path), row.names=1)
+# data <- read.csv(file=file.path(data_path), row.names=1)
+# annot <- read.csv(file=file.path(annot_path), row.names=1)
+data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
+annot <- data.frame(fread(file.path(annot_path), header=TRUE), row.names=1)
 
 if (length(annot_vars)<1){
     annot_vars <- c(colnames(annot)[1], colnames(annot)[2]) 
