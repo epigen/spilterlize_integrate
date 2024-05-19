@@ -26,7 +26,7 @@ feature_annotation_path <- snakemake@config[["feature_annotation"]]
 # annot <- read.csv(file=file.path(annot_path), row.names=1)
 # feature_annotation <- read.csv(file=file.path(feature_annotation_path), row.names=1)
 data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
-annot <- data.frame(fread(file.path(annotation_path), header=TRUE), row.names=1)
+annot <- data.frame(fread(file.path(annot_path), header=TRUE), row.names=1)
 feature_annotation <- data.frame(fread(file.path(feature_annotation_path), header=TRUE), row.names=1)
 
 
