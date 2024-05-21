@@ -14,7 +14,8 @@ data_path <- snakemake@input[["data"]]
 annot_path <- snakemake@input[["annotation"]]
 
 # output
-plot_path <- snakemake@output[["plot"]]
+plot_path <- snakemake@output[["diag_plot"]]
+cfa_plot_path <- snakemake@output[["cfa_plot"]]
 
 # parameters
 annot_vars <- snakemake@config[["visualization_parameters"]][["annotate"]]
@@ -28,9 +29,13 @@ data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
 annot <- data.frame(fread(file.path(annot_path), header=TRUE), row.names=1)
 
 if (length(annot_vars)<1){
-    annot_vars <- c(colnames(annot)[1], colnames(annot)[2]) 
+    annot_vars <- c(colnames(annot)[1], colnames(annot)[2])
+    sample_col <- "sample"
 } else if (length(annot_vars)<2){
-    annot_vars <- c(annot_vars, colnames(annot)[1]) 
+    annot_vars <- c(annot_vars, colnames(annot)[1])
+    sample_col <- annot_vars
+} else{
+    sample_col <- annot_vars[1]
 }
 
 # raw counts have to be log-normalized
@@ -38,13 +43,21 @@ if (label=="counts" | label=="filtered"){
     data <- log2(data + 1)
 }
 
-
 # transform data into long format for plotting
-data_long <- melt(data = data, value.name = "counts", variable.name = "sample")
+data_long <- reshape2::melt(data = data, value.name = "counts", variable.name = "sample")
+
+# add metadata for plotting
+if(sample_col!="sample"){
+    data_long$annot <- annot[data_long$sample, sample_col]
+}else{
+    data_long$annot <- data_long$sample
+}
 
 # Calculate mean and variance for each feature
 data_mean <- rowMeans(data)
 data_var <- apply(data, 1, sd)
+
+#### DIAGNOSTIC PLOT ####
 
 # Create mean-variance plot
 mean_var_p <- ggplot(data.frame(data_mean, data_var), aes(x=data_mean, y=data_var)) +
@@ -56,17 +69,21 @@ mean_var_p <- ggplot(data.frame(data_mean, data_var), aes(x=data_mean, y=data_va
  theme(legend.position = c(0.9, 0.9), legend.key.size = unit(0.5, "cm"), legend.text = element_text(size=8))
 
 # Create density plot of log-normalized counts per feature
-density_p <- ggplot(data_long, aes(x=counts, color=sample)) +
+density_p <- ggplot(data_long, aes(x=counts, color=annot, group = sample)) +
   geom_density() +
-  labs(x="Log-normalized Counts", title="Density of Log-normalized Counts per Sample") +
-  theme_minimal() + guides(color="none")
+  labs(x="Log-normalized Counts", title=paste0("Density of Log-normalized Counts per Sample\ncolored by ", sample_col)) +
+  theme_minimal() + 
+  theme(plot.title = element_text(size = 10)) +
+  guides(color="none")
 
 # Create boxplots of (log normalized) counts of all samples
-boxplots_p <- ggplot(data_long, aes(x=sample, y=counts, color=sample)) +
+boxplots_p <- ggplot(data_long, aes(x=sample, y=counts, color=annot)) +
   geom_boxplot(outlier.size=1, outlier.stroke = 0) +
-  labs(x="Sample", y="Log-normalized Counts", title="Boxplots of Log-normalized Counts per Sample") +
+  labs(x="Sample", y="Log-normalized Counts", title=paste0("Boxplots of Log-normalized Counts per Sample colored by ", sample_col)) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + guides(color="none")
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+       plot.title = element_text(size = 10)) + 
+  guides(color="none")
 
 # Create PCA plots colored by "batch" and "metadata"
 
@@ -102,3 +119,96 @@ figure <- (mean_var_p + density_p) / boxplots_p / (pca_p[[annot_vars[1]]] + pca_
 
 ggsave(plot_path, figure, width=8, height=12, dpi = 300)
 
+#### CONFOUNDING FACTOR ANALYSIS PLOT ####
+
+# Determine first ten PCs
+pc_n <- min(dim(pca$x)[2], 10)
+pc_data <- data.frame(pca$x[, 1:pc_n])
+
+# Calculate percentage variance explained
+var_explained_percent <- round(var_explained[1:pc_n] * 100, 1)
+
+# Add variance explained to column names
+colnames(pc_data) <- paste0("PC", 1:pc_n, "\n(", var_explained_percent, "%)")
+
+# Remove metadata without variation
+annot <- annot[, apply(annot, 2, function(x) length(unique(x)) > 1)]
+
+# Convert numerical metadata with fewer than 25 unique values to factor AND ensure all categorical metadata are factors
+annot <- as.data.frame(lapply(annot, function(x) {
+  if ((is.numeric(x) && length(unique(x)) <= 25) || !is.numeric(x)) {
+    return(factor(x))
+  } else {
+    return(x)
+  }
+}))
+
+# Split metadata into numeric and categorical
+numeric_metadata <- annot[sapply(annot, is.numeric)]
+categorical_metadata <- annot[sapply(annot, is.factor)]
+
+# Calculate p-values for each PC and numeric metadata
+p_values_numeric <- sapply(pc_data, function(pc) {
+  apply(numeric_metadata, 2, function(meta){
+      cor.test(pc, meta, method="kendall")$p.value
+  })
+})
+
+# Calculate p-values for each PC and categorical metadata
+p_values_categorical <- sapply(pc_data, function(pc) {
+  apply(categorical_metadata, 2, function(meta){
+      kruskal.test(pc ~ meta)$p.value
+#       summary(aov(pc ~ meta))[[1]][["Pr(>F)"]][1]
+  })
+})
+                       
+# Combine p-values
+p_values <- rbind(p_values_numeric, p_values_categorical)
+
+# Adjust p-values for multiple testing
+p_values_adjusted <- p.adjust(as.vector(p_values), method = "BH")
+p_values_adjusted <- matrix(p_values_adjusted, nrow = nrow(p_values), ncol = ncol(p_values))
+rownames(p_values_adjusted) <- rownames(p_values)
+colnames(p_values_adjusted) <- colnames(p_values)
+
+# Transform p-values to -log10(p-values)
+log_p_values <- -log10(p_values_adjusted)
+
+# Melt the data for ggplot
+log_p_values_melted <- reshape2::melt(log_p_values, varnames = c("Metadata", "PC"))
+                       
+# Perform hierarchical clustering on the rows (metadata)
+hclust_rows <- hclust(dist(log_p_values))
+ordered_metadata <- rownames(log_p_values)[hclust_rows$order]
+log_p_values_melted$Metadata <- factor(log_p_values_melted$Metadata, levels = ordered_metadata)
+                       
+# Create a new column in log_p_values_melted to annotate metadata as numeric or categorical
+log_p_values_melted$Type <- ifelse(log_p_values_melted$Metadata %in% colnames(numeric_metadata), "Numeric", "Categorical")
+
+# Plot using ggplot2
+cfa_plot <- ggplot(log_p_values_melted, aes(x = PC, y = Metadata, fill = value)) +
+                       geom_tile(color="black") +
+                       geom_text(aes(label = round(value, 0)), color = "black", size = 3) +
+                       scale_fill_gradient2(low = "royalblue4", high = "firebrick2", mid = "white", midpoint = 0, name = "") +
+                       facet_grid(Type ~ ., scales = "free", space = "free") +
+                       theme_minimal() +
+                       labs(title = "Statistical Association between PCs and Metadata as -log10 Adjusted P-values") +
+                       theme_minimal(base_size = 10) +
+                       theme(axis.text.x = element_text(angle = 0, hjust = 0.5),
+                             axis.title.x = element_blank(),
+                             axis.title.y = element_blank(),
+                             axis.ticks.x = element_blank(),
+                             axis.ticks.y = element_blank(),
+                             plot.title = element_text(size = 10),
+                             legend.position = "none"
+                            ) 
+
+# determine plot size
+heigth_hm <- dim(p_values)[1] * 0.2
+width_hm <- dim(p_values)[2] * 0.75 + 1
+                       
+# save plot
+# options(repr.plot.width = width_hm, repr.plot.height = heigth_hm)
+# cfa_plot
+
+ggsave(cfa_plot_path, cfa_plot, width=width_hm, height=heigth_hm, dpi = 300)
