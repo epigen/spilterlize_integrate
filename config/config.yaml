@@ -100,5 +100,5 @@ hvf_parameters:
     
 ##### VISUALIZE #####
 visualization_parameters:
-    annotate: ["experiment", "celltype"] # up to 2 columns in annotation to be visualized in PCA e.g., batch or treatment; can be empty i.e., []
+    annotate: ["experiment", "celltype"] # up to 2 columns in annotation to be visualized in PCA-, density- and boxplots e.g., batch or treatment; can be empty i.e., []
     

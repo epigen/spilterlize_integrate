@@ -71,6 +71,8 @@ __Integrate.__ The data integration was performed using the reComBat method`(ver
 
 __Highly Variable Feature (HVF) selection.__ Highly variable features (HVF) were selected based on the binned normalized dispersion of features adapted from [Zheng (2017) Nature Communications](https://doi.org/10.1038/ncomms14049). The top `[hvf_parameters.top_percentage]` percent of features were selected, resulting in `[X]` features. The dispersion for each feature across all samples was calculated as the standard deviation. Features were binned based on their means, and the dispersion of each feature was normalized by subtracting the median dispersion of its bin and dividing by the median absolute deviation (MAD) of its bin using the Python package statsmodels `(ver)[ref]`. The number of bins used for dispersion normalization was `[hvf_parameters.bins_n]`. The selected HVFs were visualized by histograms before and after normalization, mean to normalized dispersion scatterplots, and a scatterplot of the ranked normalized dispersion, always highlighting the selected features.
 
+__Confounding Factor Analysis (CFA).__ We assessed the potential confounding effects of metadata on principal components (PCs) by quantifying their statistical associations with the first ten PCs from principal component analysis (PCA). Categorical metadata were tested using the Kruskal-Wallis test, while numeric metadata were analyzed using Kendall's Tau correlation. Metadata without variation were excluded, and numeric metadata with fewer than 25 unique values were converted to factors. P-values for associations between PCs and metadata were calculated and adjusted for multiple testing using the Benjamini-Hochberg method. The results were visualized as a heatmap with hierarchically clustered rows (metadata) displaying -log10 adjusted p-values, distinguishing between numeric and categorical metadata.
+
 __Visualization.__ The quality of the data and the effectiveness of the processing steps were assessed through the following visualizations (raw/filtered counts were log2(x+1)-normalized): the mean-variance relationship of all features, densities of log2-values per sample, boxplots of log2-values per sample, and Principal Component Analysis (PCA) plots. For the PCA plots, features with zero variance were removed beforehand and colored by `[visualization_parameters.annotate]`. The plots were generated using the R libraries ggplot2, reshape2, and patchwork`(ver)[ref]`.
 
 **The analyses and visualizations described here were performed using a publicly available Snakemake `[ver](ref)` workflow `(ver)` [10.5281/zenodo.8144219](https://doi.org/10.5281/zenodo.8144219).**
@@ -93,7 +95,7 @@ The workflow performs the following steps to produce the outlined results:
   - The data can be normalized using several methods to correct for technical biases (e.g., differences in library size).
   - All methods supported in edgeR's function [CalcNormFactors](https://rdrr.io/bioc/edgeR/man/calcNormFactors.html) with subequent [CPM/RPKM](https://rdrr.io/bioc/edgeR/man/cpm.html) quantification including method specific parameters can be configured.
   - [CQN](https://bioconductor.org/packages/release/bioc/html/cqn.html) (Conditional Quantile Normalization) corrects for a covariate (e.g., GC-content) and feature length biases (e.g., gene length). The QR fit of the covariate and feature length are provided as plots (`normCQN_QRfit.png`).
-  - [VOOM](https://rdrr.io/bioc/limma/man/voom.html) (Mean-Variance Modeling at the Observational Level) from the package limma estimates the mean-variance relationship of the log-counts and generates a precision weight for each observation.
+  - [VOOM](https://rdrr.io/bioc/limma/man/voom.html) (Mean-Variance Modeling at the Observational Level) from the package limma estimates the mean-variance relationship of the log-counts and generates a precision weight for each observation. The Mean-Variance trend plot is provided (`normVOOM_mean_variance_trend.png`).
   - All normalization outputs are log2-normalized.
 - Integrate (`*_reComBat.csv`)
   - The data can be integrated using the [reComBat](https://github.com/BorgwardtLab/reComBat) method, which requires log-normalized data.
@@ -106,12 +108,17 @@ The workflow performs the following steps to produce the outlined results:
 - Results (`{split}/*.csv`)
   - All transformed datasets are saved as CSV files and named by the applied methods, respectively.
   - Example: `{split}/normCQN_reComBat_HVF.csv` implies that the respective data `{split}` was filtered, normalized using CQN, integrated with reComBat and subset to its HVFs.
-- Visualizations (`{split}/plots/*.png`)
-  - Next to the method specific visualizations (e.g., for CQN, HVF selection), a diagnostic figure is provided for every generated dataset, consisting of the following plots:
-    - Mean-Variance relationship of all features.
-    - Densities of log-normalized counts per sample.
-    - Boxplots of log-normalized counts per sample.
+- Visualizations (`{split}/plots/`)
+  - Next to the method specific visualizations (e.g., for CQN, HVF selection), a diagnostic figure is provided for every generated dataset (`*.png`), consisting of the following plots:
+    - Mean-Variance relationship of all features as hexagonal heatmap of 2d bin counts.
+    - Densities of log-normalized counts per sample colored by sample or configured annotation column.
+    - Boxplots of log-normalized counts per sample colored by sample or configured annotation column.
     - Principal Component Analysis (PCA) plots, with samples colored by up to two annotation columns (e.g., batch and treatment).
+  - Confounding Factor Analysis to inform integration (`*_CFA.png`)
+    - Quantification of statistical association between provided metadata and (up to) the first ten principal components.
+    - Categorical metadata association is tested using the non-parametric Kruskal-Wallis test, which is broadly applicable due to relaxed requirements and assumptions.
+    - Numeric metadata association is tested using rank-based Kendall's Tau, which is suitibale for "small" data sets with many ties and is robust to outliers.
+    - Statistical associations as `-log10(adjusted p-values)` are visualized using a heatmap with hierarchically clustered rows (metadata).
   - Note: raw and filtered counts are log2(x+1)-normalized for the visualizations.
   - These visualizations should help to assess the quality of the data and the effectiveness of the processing steps (e.g., normalization).
   - Visualizations are within each split's plots subfolder, with the identical naming scheme as the respective data.
@@ -139,7 +146,8 @@ Detailed specifications can be found here [./config/README.md](./config/README.m
 # Resources
 - Recommended compatible [MR.PARETO](https://github.com/epigen/mr.pareto) modules
   - for upstream processing:
-    - [ATAC-seq Processing](https://github.com/epigen/atacseq_pipeline) to quantify  chromatin accessibility.
+    - [ATAC-seq Processing](https://github.com/epigen/atacseq_pipeline) to quantify chromatin accessibility and create count matrices as input.
+    - [scRNA-seq Data Processing & Visualization](https://github.com/epigen/scrnaseq_processing_seurat) for processing and creating pseudobulked count matrices as input.
   - for downstream analyses:
       - [Unsupervised Analysis](https://github.com/epigen/unsupervised_analysis) to understand and visualize similarities and variations between samples.
       - [Differential Analysis with limma](https://github.com/epigen/dea_limma) to identify and visualize statistically significant features between sample groups.
