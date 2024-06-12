@@ -23,8 +23,6 @@ split <- snakemake@wildcards[["split"]]
 label <- snakemake@wildcards[["label"]]
 
 ### load data
-# data <- read.csv(file=file.path(data_path), row.names=1)
-# annot <- read.csv(file=file.path(annot_path), row.names=1)
 data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
 annot <- data.frame(fread(file.path(annot_path), header=TRUE), row.names=1)
 
@@ -148,19 +146,38 @@ numeric_metadata <- annot[sapply(annot, is.numeric)]
 categorical_metadata <- annot[sapply(annot, is.factor)]
 
 # Calculate p-values for each PC and numeric metadata
-p_values_numeric <- sapply(pc_data, function(pc) {
-  apply(numeric_metadata, 2, function(meta){
-      cor.test(pc, meta, method="kendall")$p.value
-  })
-})
+if (ncol(numeric_metadata)>0){
+    p_values_numeric <- sapply(pc_data, function(pc) {
+        apply(numeric_metadata, 2, function(meta){
+            cor.test(pc, meta, method="kendall")$p.value
+        })
+    })
+    
+    # ensure martix
+    p_values_numeric <- matrix(p_values_numeric, nrow = ncol(numeric_metadata), ncol = ncol(pc_data))
+    rownames(p_values_numeric) <- colnames(numeric_metadata)
+    colnames(p_values_numeric) <- colnames(pc_data)
+}else{
+    p_values_numeric <- matrix(nrow = 0, ncol = ncol(pc_data))
+}
+
 
 # Calculate p-values for each PC and categorical metadata
-p_values_categorical <- sapply(pc_data, function(pc) {
-  apply(categorical_metadata, 2, function(meta){
-      kruskal.test(pc ~ meta)$p.value
-#       summary(aov(pc ~ meta))[[1]][["Pr(>F)"]][1]
-  })
-})
+if (ncol(categorical_metadata)>0){
+    p_values_categorical <- sapply(pc_data, function(pc) {
+      apply(categorical_metadata, 2, function(meta){
+          kruskal.test(pc ~ meta)$p.value
+      })
+    })
+    
+    # ensure martix
+    p_values_categorical <- matrix(p_values_categorical, nrow = ncol(categorical_metadata), ncol = ncol(pc_data))
+    rownames(p_values_categorical) <- colnames(categorical_metadata)
+    colnames(p_values_categorical) <- colnames(pc_data)
+}else{
+    p_values_categorical <- matrix(nrow = 0, ncol = ncol(pc_data))
+}
+
                        
 # Combine p-values
 p_values <- rbind(p_values_numeric, p_values_categorical)
