@@ -1,0 +1,1 @@
+Hierarchically clustered heatmap of the sample-wise Pearson correlation matrix of data split {{snakemake.wildcards["split"]}} transformed by {{snakemake.wildcards["label"]}} using method 'complete' with distance metric 'euclidean'.
