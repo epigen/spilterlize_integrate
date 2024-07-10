@@ -39,13 +39,21 @@ rule plot_heatmap:
         data = os.path.join(result_path,'{split}','{label}.csv'),
         metadata = os.path.join(result_path,'{split}','annotation.csv'),
     output:
-        heatmap = report(os.path.join(result_path,'{split}','plots','{label}_heatmap.png'),
+        heatmap_clustered = report(os.path.join(result_path,'{split}','plots','{label}_heatmap_clustered.png'),
                       caption="../report/correlation_heatmap.rst", 
                       category="{}_{}".format(config["project_name"], module_name),
                       subcategory="{split}",
                       labels={
                           "name": "{label}",
-                          "type": "correlation heatmap"
+                          "type": "correlation heatmap clustered"
+                      }),
+        heatmap_sorted = report(os.path.join(result_path,'{split}','plots','{label}_heatmap_sorted.png'),
+                      caption="../report/correlation_heatmap.rst", 
+                      category="{}_{}".format(config["project_name"], module_name),
+                      subcategory="{split}",
+                      labels={
+                          "name": "{label}",
+                          "type": "correlation heatmap sorted"
                       }),
     params:
         partition = config.get("partition"),

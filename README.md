@@ -32,8 +32,10 @@ This project wouldn't be possible without the following software and their depen
 
 | Software | Reference (DOI) |
 | :---: | :---: |
+| ComplexHeatmap | https://doi.org/10.1093/bioinformatics/btw313     |
 | CQN            | https://doi.org/10.1093/biostatistics/kxr054      |
 | edgeR          | https://doi.org/10.1093/bioinformatics/btp616     |
+| fastcluster    | https://doi.org/10.18637/jss.v053.i09             |
 | ggplot2        | https://ggplot2.tidyverse.org/                    |
 | _limma_        | https://doi.org/10.1093/nar/gkv007                |
 | matplotlib     | https://doi.org/10.1109/MCSE.2007.55              |
@@ -73,6 +75,8 @@ __Highly Variable Feature (HVF) selection.__ Highly variable features (HVF) were
 
 __Confounding Factor Analysis (CFA).__ We assessed the potential confounding effects of metadata on principal components (PCs) by quantifying their statistical associations with the first ten PCs from principal component analysis (PCA). Categorical metadata were tested using the Kruskal-Wallis test, while numeric metadata were analyzed using Kendall's Tau correlation. Metadata without variation were excluded, and numeric metadata with fewer than 25 unique values were converted to factors. P-values for associations between PCs and metadata were calculated and adjusted for multiple testing using the Benjamini-Hochberg method. The results were visualized as a heatmap with hierarchically clustered rows (metadata) displaying -log10 adjusted p-values, distinguishing between numeric and categorical metadata.
 
+__Correlation Heatmaps.__ To assess sample similarities we generated heatmaps of the sample-wise Pearson correlation matrix. using the `cor` function in R with the "pearson" method. Two versions of heatmaps were created: one hierarchically clustered and one sorted alphabetically by sample name. Hierarchical clustering was performed with the `hclust` function from the `fastcluster` package [ver] using "euclidean" distance and "complete" linkage. Heatmaps were visualized using the `ComplexHeatmap` package [ver] and annotated with relevant metadata.
+
 __Visualization.__ The quality of the data and the effectiveness of the processing steps were assessed through the following visualizations (raw/filtered counts were log2(x+1)-normalized): the mean-variance relationship of all features, densities of log2-values per sample, boxplots of log2-values per sample, and Principal Component Analysis (PCA) plots. For the PCA plots, features with zero variance were removed beforehand and colored by `[visualization_parameters.annotate]`. The plots were generated using the R libraries ggplot2, reshape2, and patchwork`(ver)[ref]`.
 
 **The analyses and visualizations described here were performed using a publicly available Snakemake `[ver](ref)` workflow `(ver)` [10.5281/zenodo.8144219](https://doi.org/10.5281/zenodo.8144219).**
@@ -109,7 +113,7 @@ The workflow performs the following steps to produce the outlined results:
   - All transformed datasets are saved as CSV files and named by the applied methods, respectively.
   - Example: `{split}/normCQN_reComBat_HVF.csv` implies that the respective data `{split}` was filtered, normalized using CQN, integrated with reComBat and subset to its HVFs.
 - Visualizations (`{split}/plots/`)
-  - Next to the method specific visualizations (e.g., for CQN, HVF selection), a diagnostic figure is provided for every generated dataset (`*.png`), consisting of the following plots:
+  - Next to the method specific visualizations (e.g., for CQN, HVF selection), a **diagnostic figure** is provided for every generated dataset (`*.png`), consisting of the following plots:
     - Mean-Variance relationship of all features as hexagonal heatmap of 2d bin counts.
     - Densities of log-normalized counts per sample colored by sample or configured annotation column.
     - Boxplots of log-normalized counts per sample colored by sample or configured annotation column.
@@ -119,6 +123,10 @@ The workflow performs the following steps to produce the outlined results:
     - Categorical metadata association is tested using the non-parametric Kruskal-Wallis test, which is broadly applicable due to relaxed requirements and assumptions.
     - Numeric metadata association is tested using rank-based Kendall's Tau, which is suitibale for "small" data sets with many ties and is robust to outliers.
     - Statistical associations as `-log10(adjusted p-values)` are visualized using a heatmap with hierarchically clustered rows (metadata).
+  - Correlation Heatmaps (`*_heatmap_{clustered|sorted}.png`)
+    - Heatmap of sample-wise Pearson correlation matrix of the respective data split and processing step to quickly assess sample similarities e.g., replicates/conditions should correlate highly but batch shoud not.
+    - Hierarchicaly clustered using method 'complete' with distance metric 'euclidean' (`*_heatmap_clustered.png`).
+    - Alphabetically sorted by sample name (`*_heatmap_sorted.png`).
   - Note: raw and filtered counts are log2(x+1)-normalized for the visualizations.
   - These visualizations should help to assess the quality of the data and the effectiveness of the processing steps (e.g., normalization).
   - Visualizations are within each split's plots subfolder, with the identical naming scheme as the respective data.

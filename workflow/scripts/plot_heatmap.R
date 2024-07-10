@@ -14,7 +14,8 @@ data_path <- snakemake@input[["data"]]
 metadata_path <- snakemake@input[["metadata"]]
 
 # output
-plot_path <- snakemake@output[["heatmap"]]
+hm_clustered_path <- snakemake@output[["heatmap_clustered"]]
+hm_sorted_path <- snakemake@output[["heatmap_sorted"]]
 
 # parameters
 metadata_cols <- c(snakemake@config[["visualization_parameters"]][["annotate"]])
@@ -87,7 +88,8 @@ for (col in metadata_cols) {
     if (!is.numeric(metadata[[col]])) {
         n_cat <- length(unique(metadata[[col]]))
         qual_col_pals <- brewer.pal.info[brewer.pal.info$category == 'qual',]
-        colors <- sample(unique(unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))), n_cat, replace=TRUE)
+        all_colors <- unique(unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals))))
+        colors <- sample(all_colors, n_cat, replace=ifelse(n_cat>length(all_colors), TRUE, FALSE))
         names(colors) <- unique(metadata[[col]])
         colors_list[[col]] <- colors
     }
@@ -96,9 +98,11 @@ for (col in metadata_cols) {
 # Create the row annotation
 row_annot <- HeatmapAnnotation(df = metadata[, metadata_cols, drop = FALSE], which = "row", col = colors_list)
 
-### make & save heatmap
+### make & save heatmaps
 # options(repr.plot.width=plot_dim, repr.plot.height=plot_dim)
-png(filename=plot_path, width=plot_dim, height=plot_dim, units = "in", res=300)
+
+# Clustered hierarchically Heatmap
+png(filename=hm_clustered_path, width=plot_dim, height=plot_dim, units = "in", res=300)
 
 Heatmap(data,
         name = "Pearson\nCorrelation",
@@ -107,9 +111,31 @@ Heatmap(data,
         left_annotation = row_annot,
         show_column_dend = FALSE, 
         show_row_names = ifelse(nrow(data)>100, FALSE, TRUE),
-        show_column_names = FALSE,
+        show_column_names = ifelse(nrow(data)>100, FALSE, TRUE),
         cluster_rows = as.dendrogram(hc),
         cluster_columns = as.dendrogram(hc),
+        row_dend_reorder = TRUE,
+        column_dend_reorder = TRUE,
+        use_raster = TRUE,
+        raster_quality = 9
+       )
+
+dev.off()
+
+
+# Sorted alphabetically Heatmap
+png(filename=hm_sorted_path, width=plot_dim, height=plot_dim, units = "in", res=300)
+
+Heatmap(data,
+        name = "Pearson\nCorrelation",
+        column_title = paste0("Heatmap of Pearson correlation matrix sorted alphabetically by sample name."),
+        col = col_fun,
+        left_annotation = row_annot,
+        show_column_dend = FALSE, 
+        show_row_names = ifelse(nrow(data)>100, FALSE, TRUE),
+        show_column_names = ifelse(nrow(data)>100, FALSE, TRUE),
+        row_order = order(rownames(data)),
+        column_order = order(colnames(data)),
         row_dend_reorder = TRUE,
         column_dend_reorder = TRUE,
         use_raster = TRUE,
