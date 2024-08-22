@@ -82,8 +82,9 @@ rule all:
         expand(os.path.join(result_path, '{split}','plots','{all_data}.png'), split=splits, all_data=all_data),
         expand(os.path.join(result_path, '{split}','plots','{all_data}_heatmap_clustered.png'), split=splits, all_data=all_data),
         # config
-        envs = expand(os.path.join(config["result_path"],'envs',module_name,'{env}.yaml'),env=["python_basics","edgeR","cqn","reComBat","ggplot"]),
-        configs = os.path.join(config["result_path"],'configs',module_name,'{}_config.yaml'.format(config["project_name"])),
+        envs = expand(os.path.join(result_path,'envs','{env}.yaml'),env=["python_basics","edgeR","cqn","reComBat","ggplot"]),
+        configs = os.path.join(result_path,'configs','{}_config.yaml'.format(config["project_name"])),
+        annot = os.path.join(result_path,'configs','{}_annot.csv'.format(config["project_name"])),
     params:
         partition=config.get("partition"),
     threads: config.get("threads", 1)
