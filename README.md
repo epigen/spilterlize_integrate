@@ -1,7 +1,7 @@
 [![DOI](https://zenodo.org/badge/659800258.svg)](https://zenodo.org/badge/latestdoi/659800258)
 
 #  <ins>Sp</ins>lit, F<ins>ilter</ins>, Norma<ins>lize</ins> and <ins>Integrate</ins> Sequencing Data
-A [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflow to split, filter, normalize, integrate and select highly variable features of count matrices resulting from experiments with sequencing readout (e.g., RNA-seq, ATAC-seq, ChIP-seq, Methyl-seq, miRNA-seq, ...) including diagnostic visualizations documenting the respective data transformations. This often represents the first analysis after signal processing critically influencing all downstream analyses.
+A [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflow to split, filter, normalize, integrate, and select highly variable features of count matrices resulting from experiments with sequencing readout (e.g., RNA-seq, ATAC-seq, ChIP-seq, Methyl-seq, miRNA-seq, ...) including diagnostic visualizations documenting the respective data transformations. This often represents the first analysis after signal processing critically influencing all downstream analyses.
 
 This workflow adheres to the module specifications of [MR.PARETO](https://github.com/epigen/mr.pareto), an effort to augment research by modularizing (biomedical) data science. For more details and modules check out the project's repository. Please consider **starring** and sharing modules that are interesting or useful to you, this helps others to find and benefit from the effort and me to prioritize my efforts!
 
@@ -51,7 +51,7 @@ This project wouldn't be possible without the following software and their depen
 
 
 # Methods
-This is a template for the Methods section of a scientific publication and is intended to serve as a starting point. Only retain paragraphs relevant to your analysis. References `[ref]` to the respective publications are curated in the software table above. Versions `(ver)` have to be read out from the respective conda environment specifications (`workflow/envs/*.yaml` file) or post execution in the result directory (`envs/spilterlize_integrate/*.yaml`). Parameters that have to be adapted depending on the data or workflow configurations are denoted in squared brackets e.g., `[X]`.
+This is a template for the Methods section of a scientific publication and is intended to serve as a starting point. Only retain paragraphs relevant to your analysis. References `[ref]` to the respective publications are curated in the software table above. Versions `(ver)` have to be read out from the respective conda environment specifications (`workflow/envs/*.yaml` file) or post-execution in the result directory (`envs/spilterlize_integrate/*.yaml`). Parameters that have to be adapted depending on the data or workflow configurations are denoted in squared brackets e.g., `[X]`.
 
 __Split.__ The input data was split by `[split_by]`, with each split denoted by `[split_by]_{annotation_level}`. The complete data was retained in the "all" split. Sample filtering was achieved by removing sample rows from the annotation file or using `NA` in the respective annotation column. Annotations were also split and provided separately. The data was loaded, split, and saved using the Python library pandas `(ver)[ref]`.
 
@@ -105,6 +105,9 @@ The workflow performs the following steps to produce the outlined results:
   - The data can be integrated using the [reComBat](https://github.com/BorgwardtLab/reComBat) method, which requires log-normalized data.
   - This method adjusts for batch effects and unwanted sources of variation while trying to retain desired sources of variation e.g., biological variability.
   - This is particularly useful when combining data from different experiments or sequencing runs.
+  - Note: Due to a [reComBat bug](https://github.com/BorgwardtLab/reComBat/issues/3), a numerical confounder can only be corrected if at least one categorical confounder is also declared.
+    - Using the same variable for both `batch` and `categorical confounder` parameters can cause opposite batch effects.
+    - We recommend addressing the numerical confounder in downstream analyses, such as within a differential analysis model.
 - Highly Variable Feature Selection (`*_HVF.csv`)
   - The top percentage of the most variable features is selected based on the binned normalized dispersion of each feature adapted from [Zheng (2017) Nature Communications](https://doi.org/10.1038/ncomms14049).
   - These HVFs are often the most informative for downstream analyses such as clustering or differential expression, but smaller effects of interest could be lost.
@@ -113,19 +116,19 @@ The workflow performs the following steps to produce the outlined results:
   - All transformed datasets are saved as CSV files and named by the applied methods, respectively.
   - Example: `{split}/normCQN_reComBat_HVF.csv` implies that the respective data `{split}` was filtered, normalized using CQN, integrated with reComBat and subset to its HVFs.
 - Visualizations (`{split}/plots/`)
-  - Next to the method specific visualizations (e.g., for CQN, HVF selection), a **diagnostic figure** is provided for every generated dataset (`*.png`), consisting of the following plots:
-    - Mean-Variance relationship of all features as hexagonal heatmap of 2d bin counts.
+  - Next to the method-specific visualizations (e.g., for CQN, HVF selection), a **diagnostic figure** is provided for every generated dataset (`*.png`), consisting of the following plots:
+    - Mean-Variance relationship of all features as a hexagonal heatmap of 2d bin counts.
     - Densities of log-normalized counts per sample colored by sample or configured annotation column.
     - Boxplots of log-normalized counts per sample colored by sample or configured annotation column.
     - Principal Component Analysis (PCA) plots, with samples colored by up to two annotation columns (e.g., batch and treatment).
   - Confounding Factor Analysis to inform integration (`*_CFA.png`)
     - Quantification of statistical association between provided metadata and (up to) the first ten principal components.
     - Categorical metadata association is tested using the non-parametric Kruskal-Wallis test, which is broadly applicable due to relaxed requirements and assumptions.
-    - Numeric metadata association is tested using rank-based Kendall's Tau, which is suitibale for "small" data sets with many ties and is robust to outliers.
+    - Numeric metadata association is tested using rank-based Kendall's Tau, which is suitable for "small" data sets with many ties and is robust to outliers.
     - Statistical associations as `-log10(adjusted p-values)` are visualized using a heatmap with hierarchically clustered rows (metadata).
   - Correlation Heatmaps (`*_heatmap_{clustered|sorted}.png`)
     - Heatmap of sample-wise Pearson correlation matrix of the respective data split and processing step to quickly assess sample similarities e.g., replicates/conditions should correlate highly but batch shoud not.
-    - Hierarchicaly clustered using method 'complete' with distance metric 'euclidean' (`*_heatmap_clustered.png`).
+    - Hierarchically clustered using method 'complete' with distance metric 'euclidean' (`*_heatmap_clustered.png`).
     - Alphabetically sorted by sample name (`*_heatmap_sorted.png`).
   - Note: raw and filtered counts are log2(x+1)-normalized for the visualizations.
   - These visualizations should help to assess the quality of the data and the effectiveness of the processing steps (e.g., normalization).
