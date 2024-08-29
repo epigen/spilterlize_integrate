@@ -94,17 +94,25 @@ The workflow performs the following steps to produce the outlined results:
     - ...`splits` by using NA in the respective annotation column.
   - Annotations are also split and provided separately (`{annotation_column}_{annotation_level}/annotation.csv`).
 - Filter (`filtered.csv`)
-  - The features are filtered using the edgeR package's [filterByExpr](https://rdrr.io/bioc/edgeR/man/filterByExpr.html) function, which removes low count features that are unlikely to be informative.
+  - The features are filtered using the edgeR package's [filterByExpr](https://rdrr.io/bioc/edgeR/man/filterByExpr.html) function, which removes low-count features that are unlikely to be informative but likely to be statistically problematic downstream.
+  - The `min.count` parameter has the biggest impact on the filtering process, while `min.total.count` does not.
+  - The desired number of features depends on the data and assay used, below are some examples that provide a ballpark estimate based on previous experiences (feel free to ignore).
+    - Generally, you should filter until the mean-variance plot shows a consistent downward trend, with no upward trend at the low-expression end (left).
+    - RNA-seq, when starting with 55k genes it is not uncommon to end up with ~15k genes or less post-filtering.
+    - ATAC-seq consensus regions scale with the number of samples. Nevertheless, we had good experiences with ~100k genomic regions post-filtering.
 - Normalize (`norm{method}.csv`)
   - The data can be normalized using several methods to correct for technical biases (e.g., differences in library size).
   - All methods supported in edgeR's function [CalcNormFactors](https://rdrr.io/bioc/edgeR/man/calcNormFactors.html) with subequent [CPM/RPKM](https://rdrr.io/bioc/edgeR/man/cpm.html) quantification including method specific parameters can be configured.
-  - [CQN](https://bioconductor.org/packages/release/bioc/html/cqn.html) (Conditional Quantile Normalization) corrects for a covariate (e.g., GC-content) and feature length biases (e.g., gene length). The QR fit of the covariate and feature length are provided as plots (`normCQN_QRfit.png`).
-  - [VOOM](https://rdrr.io/bioc/limma/man/voom.html) (Mean-Variance Modeling at the Observational Level) from the package limma estimates the mean-variance relationship of the log-counts and generates a precision weight for each observation. The Mean-Variance trend plot is provided (`normVOOM_mean_variance_trend.png`).
+  - [CQN](https://bioconductor.org/packages/release/bioc/html/cqn.html) (Conditional Quantile Normalization) corrects for a covariate (e.g., GC-content) and feature-length biases (e.g., gene length). The QR fit of the covariate and feature-length are provided as plots (`normCQN_QRfit.png`).
+  - [VOOM](https://rdrr.io/bioc/limma/man/voom.html) (Mean-Variance Modeling at the Observational Level) from the package limma estimates the mean-variance relationship of the log counts and generates a precision weight for each observation. The Mean-Variance trend plot is provided (`normVOOM_mean_variance_trend.png`).
   - All normalization outputs are log2-normalized.
 - Integrate (`*_reComBat.csv`)
   - The data can be integrated using the [reComBat](https://github.com/BorgwardtLab/reComBat) method, which requires log-normalized data.
   - This method adjusts for batch effects and unwanted sources of variation while trying to retain desired sources of variation e.g., biological variability.
   - This is particularly useful when combining data from different experiments or sequencing runs.
+  - Use as few variables as possible for the (un)wanted parameters, as they often correlate (e.g., sequencing statistics) and can dilute the model's predictive/corrective power across multiple variables.
+   - For unwanted sources of variation, start with the strongest confounder; this is often sufficient.
+   - For wanted sources of variation, combine all relevant metadata into a single column (e.g., `condition`) and use only this.
   - Note: Due to a [reComBat bug](https://github.com/BorgwardtLab/reComBat/issues/3), a numerical confounder can only be corrected if at least one categorical confounder is also declared.
     - Using the same variable for both `batch` and `categorical confounder` parameters can cause opposite batch effects.
     - We recommend addressing the numerical confounder in downstream analyses, such as within a differential analysis model.
