@@ -92,6 +92,9 @@ The workflow performs the following steps to produce the outlined results:
 - Filter (`filtered.csv`)
   - The features are filtered using the edgeR package's [filterByExpr](https://rdrr.io/bioc/edgeR/man/filterByExpr.html) function, which removes low-count features that are unlikely to be informative but likely to be statistically problematic downstream.
   - The `min.count` parameter has the biggest impact on the filtering process, while `min.total.count` does not.
+  - **min.count** is based on actual raw counts, not CPM ([bioconductor](https://support.bioconductor.org/p/9141963/)).
+  - The **CPM cutoff** is calculated as `cpm_cutoff = min.count / medianLibSize * 1e6`, using the **median library size** for normalization ([biostars](https://www.biostars.org/p/9538555/)).
+  - **min.count.total** operates purely only to raw counts, ignoring CPM or other normalization factors like library size, which is consistent with how raw counts are handled in filtering.
   - The desired number of features depends on the data and assay used, below are some examples that provide a ballpark estimate based on previous experiences (feel free to ignore).
     - Generally, you should filter until the mean-variance plot shows a consistent downward trend, with no upward trend at the low-expression end (left).
     - RNA-seq, when starting with 55k genes it is not uncommon to end up with ~15k genes or less post-filtering.
