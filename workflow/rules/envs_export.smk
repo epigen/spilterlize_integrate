@@ -13,14 +13,12 @@ rule env_export:
     threads: config.get("threads", 1)
     log:
         os.path.join("logs","rules","env_{env}.log"),
-    params:
-        partition=config.get("partition"),
     shell:
         """
         conda env export > {output}
         """
         
-# add configuration files to report        
+# add configuration files to report
 rule config_export:
     output:
         configs = report(os.path.join(result_path,'configs','{}_config.yaml'.format(config["project_name"])), 
@@ -33,8 +31,6 @@ rule config_export:
     threads: config.get("threads", 1)
     log:
         os.path.join("logs","rules","config_export.log"),
-    params:
-        partition=config.get("partition"),
     run:
         with open(output["configs"], 'w') as outfile:
             yaml.dump(config, outfile, sort_keys=False, width=1000, indent=2)
@@ -54,8 +50,6 @@ rule annot_export:
     threads: config.get("threads", 1)
     log:
         os.path.join("logs","rules","annot_export.log"),
-    params:
-        partition=config.get("partition"),
     shell:
         """
         cp {input} {output}

@@ -1,34 +1,31 @@
+[![MR.PARETO](https://img.shields.io/badge/MR.PARETO-red)](https://github.com/epigen/mr.pareto/)
 [![DOI](https://zenodo.org/badge/659800258.svg)](https://zenodo.org/badge/latestdoi/659800258)
+[![](https://tokei.rs/b1/github/epigen/spilterlize_integrate?category=code)]() 
+[![](https://tokei.rs/b1/github/epigen/spilterlize_integrate?category=files)]()
+[![GitHub license](https://img.shields.io/github/license/epigen/spilterlize_integrate)](https://github.com/epigen/spilterlize_integrate/blob/master/LICENSE)
+![GitHub Release](https://img.shields.io/github/v/release/epigen/spilterlize_integrate)
+[![Snakemake](https://img.shields.io/badge/Snakemake->=8.20.1-green)](https://snakemake.readthedocs.io/en/stable/)
 
 #  <ins>Sp</ins>lit, F<ins>ilter</ins>, Norma<ins>lize</ins> and <ins>Integrate</ins> Sequencing Data
-A [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflow to split, filter, normalize, integrate, and select highly variable features of count matrices resulting from experiments with sequencing readout (e.g., RNA-seq, ATAC-seq, ChIP-seq, Methyl-seq, miRNA-seq, ...) including diagnostic visualizations documenting the respective data transformations. This often represents the first analysis after signal processing critically influencing all downstream analyses.
+A [Snakemake 8](https://snakemake.readthedocs.io/en/stable/) workflow to split, filter, normalize, integrate and select highly variable features of count matrices resulting from experiments with sequencing readout (e.g., RNA-seq, ATAC-seq, ChIP-seq, Methyl-seq, miRNA-seq, ...) including confounding factor analyses and diagnostic visualizations documenting the respective data transformations. This often represents the first analysis after signal processing, critically influencing all downstream analyses.
 
-This workflow adheres to the module specifications of [MR.PARETO](https://github.com/epigen/mr.pareto), an effort to augment research by modularizing (biomedical) data science. For more details and modules check out the project's repository. Please consider **starring** and sharing modules that are interesting or useful to you, this helps others to find and benefit from the effort and me to prioritize my efforts!
+> [!NOTE]  
+> This workflow adheres to the module specifications of [MR.PARETO](https://github.com/epigen/mr.pareto), an effort to augment research by modularizing (biomedical) data science. For more details, instructions, and modules check out the project's repository.
+>
+> ⭐️ **Star and share modules you find valuable** 📤 - help others discover them, and guide our focus for future work!
 
-**If you use this workflow in a publication, please don't forget to give credit to the authors by citing it using this DOI [10.5281/zenodo.8144219](https://doi.org/10.5281/zenodo.8144219).**
+> [!IMPORTANT]  
+> **If you use this workflow in a publication, please don't forget to give credit to the authors by citing it using this DOI [10.5281/zenodo.8144219](https://doi.org/10.5281/zenodo.8144219).**
 
 ![Workflow Rulegraph](./workflow/dags/rulegraph.svg)
 
-Table of contents
-----------------
-  * [Authors](#authors)
-  * [Software](#software)
-  * [Methods](#methods)
-  * [Features](#features)
-  * [Usage](#usage)
-  * [Configuration](#configuration)
-  * [Examples](#examples)
-  * [Links](#links)
-  * [Resources](#resources)
-  * [Publications](#publications)
-
-# Authors
+# 🖋️ Authors
 - [Stephan Reichl](https://github.com/sreichl)
 - [Christoph Bock](https://github.com/chrbock)
 
 
-# Software
-This project wouldn't be possible without the following software and their dependencies:
+# 💿 Software
+This project wouldn't be possible without the following software and their dependencies.
 
 | Software | Reference (DOI) |
 | :---: | :---: |
@@ -49,9 +46,8 @@ This project wouldn't be possible without the following software and their depen
 | statsmodels    | https://www.statsmodels.org/stable/index.html#citation   |
 | TMM            | https://doi.org/10.1186/gb-2010-11-3-r25          |
 
-
-# Methods
-This is a template for the Methods section of a scientific publication and is intended to serve as a starting point. Only retain paragraphs relevant to your analysis. References `[ref]` to the respective publications are curated in the software table above. Versions `(ver)` have to be read out from the respective conda environment specifications (`workflow/envs/*.yaml` file) or post-execution in the result directory (`envs/spilterlize_integrate/*.yaml`). Parameters that have to be adapted depending on the data or workflow configurations are denoted in squared brackets e.g., `[X]`.
+# 🔬 Methods
+This is a template for the Methods section of a scientific publication and is intended to serve as a starting point. Only retain paragraphs relevant to your analysis. References `[ref]` to the respective publications are curated in the software table above. Versions `(ver)` have to be read out from the respective conda environment specifications (`workflow/envs/*.yaml` file) or post execution in the result directory (`spilterlize_integrate/envs/*.yaml`). Parameters that have to be adapted depending on the data or workflow configurations are denoted in squared brackets e.g., `[X]`.
 
 __Split.__ The input data was split by `[split_by]`, with each split denoted by `[split_by]_{annotation_level}`. The complete data was retained in the "all" split. Sample filtering was achieved by removing sample rows from the annotation file or using `NA` in the respective annotation column. Annotations were also split and provided separately. The data was loaded, split, and saved using the Python library pandas `(ver)[ref]`.
 
@@ -81,7 +77,7 @@ __Visualization.__ The quality of the data and the effectiveness of the processi
 
 **The analyses and visualizations described here were performed using a publicly available Snakemake `[ver](ref)` workflow `(ver)` [10.5281/zenodo.8144219](https://doi.org/10.5281/zenodo.8144219).**
 
-# Features
+# 🚀 Features
 The workflow performs the following steps to produce the outlined results:
 
 - Split (`{annotation_column}_{annotation_level}/counts.csv`)
@@ -143,39 +139,45 @@ The workflow performs the following steps to produce the outlined results:
   - Visualizations are within each split's plots subfolder, with the identical naming scheme as the respective data.
 
 
-# Usage
+# 🛠️ Usage
 Here are some tips for the usage of this workflow:
 - Don't be scared off by the number of configurable parameters, the goal was to enable maximum configurability, hence the config.yaml is quite comprehensive.
 - Start with defaults, which are provided.
 - Use a minimum of options and configuration changes at the beginning until the workflow is running, then start to adapt.
 - Use the diagnostic visualizations to understand the effect different methods and parameter combinations have on your data.
 
-# Configuration
+# ⚙️ Configuration
 Detailed specifications can be found here [./config/README.md](./config/README.md)
 
-# Examples
+# 📖 Examples
 --- COMING SOON ---
 
-# Links
+# 🔗 Links
 - [GitHub Repository](https://github.com/epigen/spilterlize_integrate/)
 - [GitHub Page](https://epigen.github.io/spilterlize_integrate/)
 - [Zenodo Repository](https://doi.org/10.5281/zenodo.8144219)
 - [Snakemake Workflow Catalog Entry](https://snakemake.github.io/snakemake-workflow-catalog?usage=epigen/spilterlize_integrate)
 
-# Resources
+# 📚 Resources
 - Recommended compatible [MR.PARETO](https://github.com/epigen/mr.pareto) modules
   - for upstream processing:
-    - [ATAC-seq Processing](https://github.com/epigen/atacseq_pipeline) to quantify chromatin accessibility and create count matrices as input.
-    - [scRNA-seq Data Processing & Visualization](https://github.com/epigen/scrnaseq_processing_seurat) for processing and creating pseudobulked count matrices as input.
+    - [ATAC-seq Processing](https://github.com/epigen/atacseq_pipeline) to quantify chromatin accessibility into count matrices as input.
+    - [scRNA-seq Data Processing & Visualization](https://github.com/epigen/scrnaseq_processing_seurat) for processing (multimodal) single-cell transcriptome data. and creating pseudobulked count matrices as input.
   - for downstream analyses:
-      - [Unsupervised Analysis](https://github.com/epigen/unsupervised_analysis) to understand and visualize similarities and variations between samples.
-      - [Differential Analysis with limma](https://github.com/epigen/dea_limma) to identify and visualize statistically significant features between sample groups.
+    - [Unsupervised Analysis](https://github.com/epigen/unsupervised_analysis) to understand and visualize similarities and variations between cells/samples, including dimensionality reduction and cluster analysis. Useful for all tabular data including single-cell and bulk sequencing data.
+    - [Differential Analysis with limma](https://github.com/epigen/dea_limma) to identify and visualize statistically significantly different features (e.g., genes or genomic regions) between sample groups.
+    - [Enrichment Analysis](https://github.com/epigen/enrichment_analysis) for biomedical interpretation of (differential) analysis results using prior knowledge.
 - [Bioconductor - RNAseq123 - Workflow](https://bioconductor.org/packages/release/workflows/html/RNAseq123.html)
 - _limma_ workflow tutorial RNA-seq analysis is easy as 1-2-3 with _limma_, Glimma and edgeR
     - [notebook](https://bioconductor.org/packages/release/workflows/vignettes/RNAseq123/inst/doc/limmaWorkflow.html)
     - [paper](https://f1000research.com/articles/5-1408/v3)
 - [Normalized dispersion](https://www.nature.com/articles/ncomms14049#:~:text=their%20mean%20expression.-,Normalized%20dispersion,-is%20calculated%20as) calculation for selection of highly variable features adapted from [Zheng (2017) Nature Communications](https://doi.org/10.1038/ncomms14049).
 
-# Publications
+# 📑 Publications
 The following publications successfully used this module for their analyses.
+- [FirstAuthors et al. (202X) Journal Name - Paper Title.](https://doi.org/10.XXX/XXXX)
 - ...
+
+# ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=epigen/spilterlize_integrate&type=Date)](https://star-history.com/#epigen/spilterlize_integrate&Date)

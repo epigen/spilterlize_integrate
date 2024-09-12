@@ -6,7 +6,6 @@ rule norm_edgeR:
     output:
         normalized_counts = expand(os.path.join(result_path,'{{split}}','{method}.csv'), method=norm_edgeR_methods),
     params:
-        partition = config.get("partition"),
         result_path = result_path,
         split = lambda w: "{}".format(w.split),
     threads: config.get("threads", 1)
@@ -36,7 +35,6 @@ rule norm_cqn:
                               "type": "QR fit plot"
                           }),
     params:
-        partition = config.get("partition"),
         split = lambda w: "{}".format(w.split),
     threads: config.get("threads", 1)
     resources:
@@ -64,7 +62,6 @@ rule norm_voom:
                               "type": "Mean-Variance Trend"
                           }),
     params:
-        partition = config.get("partition"),
         split = lambda w: "{}".format(w.split),
     threads: config.get("threads", 1)
     resources:

@@ -21,8 +21,6 @@ rule plot_diagnostics:
                           "name": "{label}",
                           "type": "confounding factor analysis plot"
                       }),
-    params:
-        partition = config.get("partition"),
     threads: config.get("threads", 1)
     resources:
         mem_mb=config.get("mem", "16000"),
@@ -55,8 +53,6 @@ rule plot_heatmap:
                           "name": "{label}",
                           "type": "correlation heatmap sorted"
                       }),
-    params:
-        partition = config.get("partition"),
     threads: config.get("threads", 1)
     resources:
         mem_mb=config.get("mem", "16000"),

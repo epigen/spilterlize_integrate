@@ -1,3 +1,7 @@
+
+##### global workflow dependencies #####
+conda: "envs/global.yaml"
+
 # libraries
 import yaml
 import pandas as pd
@@ -12,7 +16,7 @@ import subprocess
 module_name = "spilterlize_integrate"
 
 ##### set minimum snakemake version #####
-min_version("7.15.2")
+min_version("8.20.1")
 
 ##### setup report #####
 report: "report/workflow.rst"
@@ -85,8 +89,6 @@ rule all:
         envs = expand(os.path.join(result_path,'envs','{env}.yaml'),env=["python_basics","edgeR","cqn","reComBat","ggplot"]),
         configs = os.path.join(result_path,'configs','{}_config.yaml'.format(config["project_name"])),
         annot = os.path.join(result_path,'configs','{}_annot.csv'.format(config["project_name"])),
-    params:
-        partition=config.get("partition"),
     threads: config.get("threads", 1)
     resources:
         mem_mb=config.get("mem", "16000"),

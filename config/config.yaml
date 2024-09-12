@@ -1,6 +1,6 @@
 
 ##### RESOURCES #####
-partition: 'shortq'
+# memory in MB
 mem: '8000'
 threads: 1
 

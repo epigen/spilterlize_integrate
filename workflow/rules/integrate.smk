@@ -6,8 +6,6 @@ rule integrate_recombat:
         annotation = os.path.join(result_path,'{split}','annotation.csv'),
     output:
         integrated_data = os.path.join(result_path,'{split}','norm{norm_method}_reComBat.csv'),
-    params:
-        partition = config.get("partition"),
     threads: config.get("threads", 1)
     resources:
         mem_mb=config.get("mem", "16000"),
