@@ -13,6 +13,7 @@ project_name: MySeqData # name of the project/dataset
 
 # path to the feature annotation as CSV file, required for RPKM quantification (feature length) and CQN normalization (feature length, covariate), otherwise empty ""
 # formatted as feature x metadata (rows x columns)
+# column names used in the feature annotation file, can be used in the parameters of supported methods below e.g., for RPKM quantification or CQN normalization
 feature_annotation: /path/to/feature_annotation.csv
 
 
