@@ -20,6 +20,7 @@ feature_annotation: /path/to/feature_annotation.csv
 ##### SPLIT #####
 # metadata column(s) by which the data should be split.
 # to skip, leave empty i.e., []
+# top: combinatorial or arbitrarily complex splitting can be achieved by dedicated columns in the annotation file
 split_by: ['organ', 'celltype']
 
 ##### FILTER #####
