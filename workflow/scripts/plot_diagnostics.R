@@ -181,6 +181,8 @@ if (ncol(categorical_metadata)>0){
                        
 # Combine p-values
 p_values <- rbind(p_values_numeric, p_values_categorical)
+min_nonzero <- min(p_values[p_values > 0])
+p_values[p_values == 0] <- min_nonzero
 
 # Adjust p-values for multiple testing
 p_values_adjusted <- p.adjust(as.vector(p_values), method = "BH")
