@@ -2,7 +2,7 @@ name: python_basics
 channels:
   - conda-forge
   - bioconda
-  - defaults
+  - nodefaults
 dependencies:
   - python=3.10
   - pandas=1.5.3

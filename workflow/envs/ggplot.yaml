@@ -2,7 +2,7 @@ name: ggplot
 channels:
   - conda-forge
   - bioconda
-  - defaults
+  - nodefaults
 dependencies:
   - r-ggplot2=3.4.2
   - r-patchwork=1.1.2

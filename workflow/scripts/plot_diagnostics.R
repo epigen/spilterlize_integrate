@@ -221,7 +221,7 @@ cfa_plot <- ggplot(log_p_values_melted, aes(x = PC, y = Metadata, fill = value))
                             ) 
 
 # determine plot size
-heigth_hm <- dim(p_values)[1] * 0.2
+heigth_hm <- dim(p_values)[1] * 0.2 + 1
 width_hm <- dim(p_values)[2] * 0.75 + 1
                        
 # save plot
