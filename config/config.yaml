@@ -27,7 +27,7 @@ split_by: ['organ', 'celltype']
 # parameters for the function edgeR:filterByExpr, default are in comments
 # https://rdrr.io/bioc/edgeR/man/filterByExpr.html
 filter_parameters:
-    group: "condition" # "NULL" group has to be a column in annotation
+    group: "condition" # "NULL"; group has to be a column in annotation
     min.count: 10 # 10
     min.total.count: 15 # 15
     large.n: 10 # 10
@@ -74,6 +74,16 @@ voom_parameters:
     span: 0.5 # 0.5
 
 ##### INTEGRATE #####
+
+### limma's removeBatchEffect
+# limma::removeBatchEffect -> https://rdrr.io/bioc/limma/man/removeBatchEffect.html
+# use case: remove unwanted (batch) effects from data, while desired effects are preserved, prior to downstream analyses e.g., dimensionality reduction with PCA/UMAP
+# to skip leave desired empty i.e., []
+removeBatchEffect_parameters:
+    norm_methods: ["CQN", "TMM"] # list of normalization outputs to be integrated; have to be configured above; options: "TMM","TMMwsp","RLE","upperquartile","CPM","RPKM","CQN","VOOM"
+    desired: [] # list of the column names of desired variation in annotation
+    unwanted_categorical: [] # list of maximal 2 column names of categorical variables of unwanted variation in annotation e.g., batch; leave empty [] if none
+    unwanted_numerical: [] # list of the column names of numerical variables of unwanted variation in annotation; leave empty [] if none
 
 ### reComBat
 # https://github.com/BorgwardtLab/reComBat

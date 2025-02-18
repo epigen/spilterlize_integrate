@@ -49,9 +49,9 @@ norm_methods = norm_edgeR_methods + norm_cqn + norm_voom
 
 # integration methods
 integration_data = []
-if config["reComBat_parameters"]["batch_column"]!="":
-    integration_data = config["reComBat_parameters"]["norm_methods"]
-    integration_data = ["norm"+method+"_reComBat" for method in integration_data]
+if len(config["removeBatchEffect_parameters"]["desired"])!=0:
+    integration_data = config["removeBatchEffect_parameters"]["norm_methods"]
+    integration_data = ["norm"+method+"_integrated" for method in integration_data]
 # print(integration_data)
 
 # data for HVF selection
@@ -86,7 +86,7 @@ rule all:
         expand(os.path.join(result_path, '{split}','plots','{all_data}.png'), split=splits, all_data=all_data),
         expand(os.path.join(result_path, '{split}','plots','{all_data}_heatmap_clustered.png'), split=splits, all_data=all_data),
         # config
-        envs = expand(os.path.join(result_path,'envs','{env}.yaml'),env=["python_basics","edgeR","cqn","reComBat","ggplot"]),
+        envs = expand(os.path.join(result_path,'envs','{env}.yaml'),env=["python_basics","edgeR","cqn","ggplot"]),
         configs = os.path.join(result_path,'configs','{}_config.yaml'.format(config["project_name"])),
         annot = os.path.join(result_path,'configs','{}_annot.csv'.format(config["project_name"])),
     threads: config.get("threads", 1)
