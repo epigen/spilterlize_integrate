@@ -7,7 +7,7 @@
 [![Snakemake](https://img.shields.io/badge/Snakemake->=8.20.1-green)](https://snakemake.readthedocs.io/en/stable/)
 
 #  <ins>Sp</ins>lit, F<ins>ilter</ins>, Norma<ins>lize</ins> and <ins>Integrate</ins> Sequencing Data
-A [Snakemake 8](https://snakemake.readthedocs.io/en/stable/) workflow to split, filter, normalize, integrate and select highly variable features of count matrices resulting from experiments with sequencing readout (e.g., RNA-seq, ATAC-seq, ChIP-seq, Methyl-seq, miRNA-seq, ...) including confounding factor analyses and diagnostic visualizations documenting the respective data transformations. This often represents the first analysis after signal processing, critically influencing all downstream analyses.
+A [Snakemake 8](https://snakemake.readthedocs.io/en/stable/) workflow to split, filter, normalize, integrate and select highly variable features of count matrices resulting from experiments with sequencing readout (e.g., RNA-seq, ATAC-seq, ChIP-seq, Methyl-seq, miRNA-seq, ...) including confounding factor analyses and diagnostic visualizations informing and documenting the respective data transformations. This often represents the first analysis after signal processing, critically influencing all downstream analyses.
 
 > [!NOTE]  
 > This workflow adheres to the module specifications of [MrBiomics](https://github.com/epigen/MrBiomics), an effort to augment research by modularizing (biomedical) data science. For more details, instructions, and modules check out the project's repository.
@@ -38,7 +38,6 @@ This project wouldn't be possible without the following software and their depen
 | matplotlib     | https://doi.org/10.1109/MCSE.2007.55              |
 | pandas         | https://doi.org/10.5281/zenodo.3509134            |
 | patchwork      | https://CRAN.R-project.org/package=patchwork      |
-| reComBat       | https://doi.org/10.1093/bioadv/vbac071            |
 | reshape2       | https://doi.org/10.18637/jss.v021.i12             |
 | scikit-learn   | http://jmlr.org/papers/v12/pedregosa11a.html      |
 | seaborn        | https://doi.org/10.21105/joss.03021               |
@@ -65,7 +64,7 @@ The VOOM method from the R package limma`(ver)[ref]` was used to estimate the me
 
 The normalization results were log2-normalized for downstream analyses.
 
-__Integrate.__ The data integration was performed using the reComBat method`(ver)[ref]` and applied to the log-normalized data. This method adjusts for batch effects and unwanted sources of variation while retaining desired (e.g., biological) variability. The following effects were modeled within the integration: batch `[batch_column]`, desired variation `[desired_categorical]` and `[desired_numerical]`, unwanted variation `[unwanted_categorical]` and `[unwanted_numerical]`. The parameters used for the integration included `[reComBat_parameters]`.
+__Integrate.__ The data integration was performed using `limma`'s `removeBatchEffect` method`(ver)[ref]` and applied to the log-normalized data. This method adjusts for batch effects and unwanted sources of variation while retaining desired (e.g., biological) variability. The following effects were modeled within the integration: desired variation `[desired]` was retained, while unwanted variation `[unwanted_categorical]` and `[unwanted_numerical]` were removed.
 
 __Highly Variable Feature (HVF) selection.__ Highly variable features (HVF) were selected based on the binned normalized dispersion of features adapted from [Zheng (2017) Nature Communications](https://doi.org/10.1038/ncomms14049). The top `[hvf_parameters.top_percentage]` percent of features were selected, resulting in `[X]` features. The dispersion for each feature across all samples was calculated as the standard deviation. Features were binned based on their means, and the dispersion of each feature was normalized by subtracting the median dispersion of its bin and dividing by the median absolute deviation (MAD) of its bin using the Python package statsmodels `(ver)[ref]`. The number of bins used for dispersion normalization was `[hvf_parameters.bins_n]`. The selected HVFs were visualized by histograms before and after normalization, mean to normalized dispersion scatterplots, and a scatterplot of the ranked normalized dispersion, always highlighting the selected features.
 
@@ -105,23 +104,21 @@ The workflow performs the following steps to produce the outlined results:
   - [CQN](https://bioconductor.org/packages/release/bioc/html/cqn.html) (Conditional Quantile Normalization) corrects for a covariate (e.g., GC-content) and feature-length biases (e.g., gene length). The QR fit of the covariate and feature-length are provided as plots (`normCQN_QRfit.png`).
   - [VOOM](https://rdrr.io/bioc/limma/man/voom.html) (Mean-Variance Modeling at the Observational Level) from the package limma estimates the mean-variance relationship of the log counts and generates a precision weight for each observation. The Mean-Variance trend plot is provided (`normVOOM_mean_variance_trend.png`).
   - All normalization outputs are log2-normalized.
-- Integrate (`*_reComBat.csv`)
-  - The data can be integrated using the [reComBat](https://github.com/BorgwardtLab/reComBat) method, which requires log-normalized data.
+- Integrate (`*_integrated.csv`)
+  - The data can be integrated using the [limma's removeBatchEffect](https://rdrr.io/bioc/limma/man/removeBatchEffect.html) function, which requires log-normalized data as input.
   - This method adjusts for batch effects and unwanted sources of variation while trying to retain desired sources of variation e.g., biological variability.
   - This is particularly useful when combining data from different experiments or sequencing runs.
-  - Use as few variables as possible for the (un)wanted parameters, as they often correlate (e.g., sequencing statistics) and can dilute the model's predictive/corrective power across multiple variables.
+  - Use as few variables as possible for the (un)wanted parameters, as they often correlate (e.g., sequencing statistics) and can dilute the model's predictive/corrective power across multiple variables. The effects are assumed to be additive.
    - For unwanted sources of variation, start with the strongest confounder; this is often sufficient.
-   - For wanted sources of variation, combine all relevant metadata into a single column (e.g., `condition`) and use only this.
-  - Note: Due to a [reComBat bug](https://github.com/BorgwardtLab/reComBat/issues/3), a numerical confounder can only be corrected if at least one categorical confounder is also declared.
-    - Using the same variable for both `batch` and `categorical confounder` parameters can cause opposite batch effects.
-    - We recommend addressing the numerical confounder in downstream analyses, such as within a differential analysis model.
+   - For desired sources of variation, combine all relevant metadata into a single column (e.g., `condition`) and use only this.
+   - Note: Output is not intended to be used for linear modelling. For linear modelling, it is better to include the covariates in the linear model. The output provides intuition how the downstream analyses such as linear modeling using limma given the same design, "see" the data. The output should be used e.g., for unsupervised analyses.
 - Highly Variable Feature Selection (`*_HVF.csv`)
   - The top percentage of the most variable features is selected based on the binned normalized dispersion of each feature adapted from [Zheng (2017) Nature Communications](https://doi.org/10.1038/ncomms14049).
   - These HVFs are often the most informative for downstream analyses such as clustering or differential expression, but smaller effects of interest could be lost.
   - The selection is visualized by histograms before and after normalization, mean to normalized dispersion scatterplots, and a scatterplot of the ranked normalized dispersion always highlighting the selected features (`*_HVF_selection.png`).
 - Results (`{split}/*.csv`)
   - All transformed datasets are saved as CSV files and named by the applied methods, respectively.
-  - Example: `{split}/normCQN_reComBat_HVF.csv` implies that the respective data `{split}` was filtered, normalized using CQN, integrated with reComBat and subset to its HVFs.
+  - Example: `{split}/normCQN_integrated_HVF.csv` implies that the respective data `{split}` was filtered, normalized using CQN, integrated and subset to its HVFs.
 - Visualizations (`{split}/plots/`)
   - Next to the method-specific visualizations (e.g., for CQN, HVF selection), a **diagnostic figure** is provided for every generated dataset (`*.png`), consisting of the following plots:
     - Mean-Variance relationship of all features as a hexagonal heatmap of 2d bin counts.
@@ -144,7 +141,7 @@ The workflow performs the following steps to produce the outlined results:
 
 # 🛠️ Usage
 Here are some tips for the usage of this workflow:
-- Don't be scared off by the number of configurable parameters, the goal was to enable maximum configurability, hence the config.yaml is quite comprehensive.
+- Don't be scared off by the number of configurable parameters, the goal was to enable maximum configurability, hence the `config.yaml` is quite comprehensive.
 - Start with defaults, which are provided.
 - Use a minimum of options and configuration changes at the beginning until the workflow is running, then start to adapt.
 - Use the diagnostic visualizations to understand the effect different methods and parameter combinations have on your data.
