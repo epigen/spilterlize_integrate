@@ -27,7 +27,7 @@ split_by: ['organ', 'celltype']
 # parameters for the function edgeR:filterByExpr, default are in comments
 # https://rdrr.io/bioc/edgeR/man/filterByExpr.html
 filter_parameters:
-    group: "condition" # "NULL"
+    group: "condition" # "NULL" group has to be a column in annotation
     min.count: 10 # 10
     min.total.count: 15 # 15
     large.n: 10 # 10
@@ -66,6 +66,7 @@ cqn_parameters:
 
 ### VOOM
 # limma::voom -> https://rdrr.io/bioc/limma/man/voom.html
+# use case: show the user how the data actually looks inside of a subsequent limma-voom differential analysis approach
 # to skip leave normalize.method empty i.e., ""
 voom_parameters:
     calcNormFactors_method: "none" # "none"; options: any other supported method from edgeR::CalcNormFactors (parameters from above are used)
@@ -79,7 +80,7 @@ voom_parameters:
 # requires log-normalized counts i.e., at least CPM
 # to skip leave batch_column empty i.e., ""
 reComBat_parameters:
-    norm_methods: ["CQN", "TMM"] # list of normalization outputs to be integrated (required to be configured above) 
+    norm_methods: ["CQN", "TMM"] # list of normalization outputs to be integrated; have to be configured above; options: "TMM","TMMwsp","RLE","upperquartile","CPM","RPKM","CQN","VOOM"
     batch_column: "experiment" # name of the batch column in annotation e.g., "batch"
     desired_categorical: ["organ","celltype","genotype"] # list of the column names of categorical variables of desired variation in annotation
     desired_numerical: [] # list of the column names of numerical variables of desired variation in annotation
