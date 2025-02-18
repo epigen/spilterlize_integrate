@@ -85,27 +85,6 @@ removeBatchEffect_parameters:
     unwanted_categorical: [] # list of maximal 2 column names of categorical variables of unwanted variation in annotation e.g., batch; leave empty [] if none
     unwanted_numerical: [] # list of the column names of numerical variables of unwanted variation in annotation; leave empty [] if none
 
-### reComBat
-# https://github.com/BorgwardtLab/reComBat
-# requires log-normalized counts i.e., at least CPM
-# to skip leave batch_column empty i.e., ""
-reComBat_parameters:
-    norm_methods: ["CQN", "TMM"] # list of normalization outputs to be integrated; have to be configured above; options: "TMM","TMMwsp","RLE","upperquartile","CPM","RPKM","CQN","VOOM"
-    batch_column: "experiment" # name of the batch column in annotation e.g., "batch"
-    desired_categorical: ["organ","celltype","genotype"] # list of the column names of categorical variables of desired variation in annotation
-    desired_numerical: [] # list of the column names of numerical variables of desired variation in annotation
-    unwanted_categorical: [] # list of the column names of categorical variables of unwanted variation in annotation
-    unwanted_numerical: [] # list of the column names of numerical variables of unwanted variation in annotation
-    parametric: True # True
-    model: 'linear' # 'linear', alternatives: ridge, lasso, elastic_net
-    config: "" # "", Optional arguments for sklearn model, for 'linear' e.g., "{'fit_intercept':False,'copy_X':True,'n_jobs':1,'positive':False}"
-    conv_criterion: 0.0001 # 0.0001
-    max_iter: 1000 # 1000
-    mean_only: False # False
-    optimize_params: True # True
-    reference_batch: "" # ""
-    verbose: True # True
-
 ##### Highly Variable Features (HVF) #####
 hvf_parameters:
     top_percentage: 10 # percentage of top features to select
