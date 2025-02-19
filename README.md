@@ -6,8 +6,8 @@
 ![GitHub Release](https://img.shields.io/github/v/release/epigen/spilterlize_integrate)
 [![Snakemake](https://img.shields.io/badge/Snakemake->=8.20.1-green)](https://snakemake.readthedocs.io/en/stable/)
 
-#  <ins>Sp</ins>lit, F<ins>ilter</ins>, Norma<ins>lize</ins> and <ins>Integrate</ins> Sequencing Data
-A [Snakemake 8](https://snakemake.readthedocs.io/en/stable/) workflow to split, filter, normalize, integrate and select highly variable features of count matrices resulting from experiments with sequencing readout (e.g., RNA-seq, ATAC-seq, ChIP-seq, Methyl-seq, miRNA-seq, ...) including confounding factor analyses and diagnostic visualizations informing and documenting the respective data transformations. This often represents the first analysis after signal processing, critically influencing all downstream analyses.
+#  <ins>Sp</ins>lit, F<ins>ilter</ins>, Norma<ins>lize</ins> and <ins>Integrate</ins> Next-Generation Sequencing Count Data
+A [Snakemake 8](https://snakemake.readthedocs.io/en/stable/) workflow to split, filter, normalize, integrate and select highly variable features of count matrices resulting from next-generation sequencing (NGS) experiments (e.g., RNA-seq, ATAC-seq, ChIP-seq, Methyl-seq, miRNA-seq, ...) including confounding factor analyses and diagnostic visualizations informing and documenting the respective data transformations. This often represents the first analysis after signal processing, critically influencing all downstream analyses.
 
 > [!NOTE]  
 > This workflow adheres to the module specifications of [MrBiomics](https://github.com/epigen/MrBiomics), an effort to augment research by modularizing (biomedical) data science. For more details, instructions, and modules check out the project's repository.
@@ -114,7 +114,7 @@ The workflow performs the following steps to produce the outlined results:
    - Note: Output is not intended to be used for linear modelling. For linear modelling, it is better to include the covariates in the linear model. The output provides intuition how the downstream analyses such as linear modeling using limma given the same design, "see" the data. The output should be used e.g., for unsupervised analyses.
 - Highly Variable Feature Selection (`*_HVF.csv`)
   - The top percentage of the most variable features is selected based on the binned normalized dispersion of each feature adapted from [Zheng (2017) Nature Communications](https://doi.org/10.1038/ncomms14049).
-  - These HVFs are often the most informative for downstream analyses such as clustering or differential expression, but smaller effects of interest could be lost.
+  - These HVFs are often the most informative for downstream analyses such as ML, clustering or differential expression, but smaller effects of interest could be lost.
   - The selection is visualized by histograms before and after normalization, mean to normalized dispersion scatterplots, and a scatterplot of the ranked normalized dispersion always highlighting the selected features (`*_HVF_selection.png`).
 - Results (`{split}/*.csv`)
   - All transformed datasets are saved as CSV files and named by the applied methods, respectively.
@@ -151,7 +151,11 @@ Here are some tips for the usage of this workflow:
 Detailed specifications can be found here [./config/README.md](./config/README.md)
 
 # 📖 Examples
---- COMING SOON ---
+Explore detailed examples showcasing module usage in comprehensive end-to-end analyses in our [MrBiomics Recipes](https://github.com/epigen/MrBiomics?tab=readme-ov-file#-recipes).
+
+- [ATACseq Analysis Recipe](https://github.com/epigen/MrBiomics/wiki/ATACseq-Analysis-Recipe)
+- [RNAseq Analysis Recipe](https://github.com/epigen/MrBiomics/wiki/RNAseq-Analysis-Recipe)
+- [Integrative Analysis Recipe](https://github.com/epigen/MrBiomics/wiki/Integrative-Analysis-Recipe)
 
 # 🔗 Links
 - [GitHub Repository](https://github.com/epigen/spilterlize_integrate/)
