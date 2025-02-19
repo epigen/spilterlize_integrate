@@ -85,6 +85,7 @@ rule all:
         # VISUALIZE
         expand(os.path.join(result_path, '{split}','plots','{all_data}.png'), split=splits, all_data=all_data),
         expand(os.path.join(result_path, '{split}','plots','{all_data}_heatmap_clustered.png'), split=splits, all_data=all_data),
+        expand(os.path.join(result_path,'{split}','plots','CFA.png'), split=splits),
         # config
         envs = expand(os.path.join(result_path,'envs','{env}.yaml'),env=["python_basics","edgeR","cqn","ggplot"]),
         configs = os.path.join(result_path,'configs','{}_config.yaml'.format(config["project_name"])),

@@ -1,0 +1,1 @@
+Confounding factor analysis (CFA) heatmap of data split {{snakemake.wildcards["split"]}} as pairwise statistical association between metadata.
