@@ -146,6 +146,7 @@ Here are some tips for the usage of this workflow:
 - Start with defaults, which are provided.
 - Use a minimum of options and configuration changes at the beginning until the workflow is running, then start to adapt.
 - Use the diagnostic visualizations to understand the effect different methods and parameter combinations have on your data.
+- Leverage confounding factor analysis (CFA) capabilities. First check how metadata are statistically associated with each other (`CFA.png`). Based on that decide which metadata to remove/integrate and/or put downstream in your linear model as covariates. Always use as few as possible, but as many as necessary.
 
 # ⚙️ Configuration
 Detailed specifications can be found here [./config/README.md](./config/README.md)
