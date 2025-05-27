@@ -13,7 +13,7 @@ project_name: MySeqData # name of the project/dataset
 
 # path to the feature annotation as CSV file, required for RPKM quantification (feature length) and CQN normalization (feature length, covariate), otherwise empty ""
 # formatted as feature x metadata (rows x columns)
-# column names used in the feature annotation file, can be used in the parameters of supported methods below e.g., for RPKM quantification or CQN normalization
+# column names used in the feature_annotation file, can be used in the parameters of supported methods below e.g., for RPKM quantification or CQN normalization
 feature_annotation: /path/to/feature_annotation.csv
 
 
@@ -51,14 +51,14 @@ edgeR_parameters:
     quantification: "CPM" # Compute counts per million ("CPM") or reads per kilobase per million ("RPKM").
     log: "TRUE" # "TRUE"
     prior.count: 2 # default: 2
-    gene.length: "length" # required for RPKM otherwise "", column name in feature annotation (specified above)
+    gene.length: "length" # required for RPKM otherwise "", column name in feature_annotation (specified above)
 
-### CQN (requires feature annotation, configured above)
+### CQN (requires feature_annotation, configured above)
 # cqn::cqn -> https://bioconductor.org/packages/release/bioc/html/cqn.html
 # to skip leave x empty i.e., ""
 cqn_parameters:
-    x: "gc" # covariate, column name in feature annotation
-    lengths: "length" # column name in feature annotation
+    x: "gc" # covariate, column name in feature_annotation
+    lengths: "length" # column name in feature_annotation
     sizeFactors: "NULL" # "NULL" or column name in annotation
     tau: 0.5 # 0.5, only change if expert
     sqn: "TRUE" # "TRUE", only change if expert

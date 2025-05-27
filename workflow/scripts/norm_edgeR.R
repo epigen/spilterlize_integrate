@@ -8,22 +8,18 @@ set.seed(42)
 
 # input
 data_path <- snakemake@input[["filtered_counts"]]
+feature_annotation_path <- snakemake@input[["feature_annotation"]]
 
 # parameters
 result_path <- snakemake@params[["result_path"]]
 split <- snakemake@params[["split"]]
-
-# config
-norm_parameters <- snakemake@config[["edgeR_parameters"]]
-feature_annotation_path <- snakemake@config[["feature_annotation"]]
+norm_parameters <- snakemake@params[["norm_parameters"]]
 
 ### load data
-# data <- read.csv(file=file.path(data_path), row.names=1)
 data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
 
 # load subset feature annotation, if provided
 if(feature_annotation_path!=""){
-#     feature_annotation <- read.csv(file=file.path(feature_annotation_path), row.names=1)
     feature_annotation <- data.frame(fread(file.path(feature_annotation_path), header=TRUE), row.names=1)
     feature_annotation <- feature_annotation[rownames(data),]
 }
@@ -72,6 +68,5 @@ for(method in norm_parameters[["method"]]){
     }
     
     # save normalized data
-#     write.csv(norm_data, file=file.path(result_path,split,paste0("norm",method,".csv")), row.names=TRUE)
     fwrite(as.data.frame(norm_data), file=file.path(result_path,split,paste0("norm",method,".csv")), row.names=TRUE)
 }

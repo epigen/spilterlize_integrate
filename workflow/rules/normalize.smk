@@ -3,11 +3,13 @@
 rule norm_edgeR:
     input:
         filtered_counts = os.path.join(result_path,'{split}','filtered.csv'),
+        feature_annotation = config["feature_annotation"] if config["feature_annotation"]!="" else [],
     output:
         normalized_counts = expand(os.path.join(result_path,'{{split}}','{method}.csv'), method=norm_edgeR_methods),
     params:
         result_path = result_path,
         split = lambda w: "{}".format(w.split),
+        norm_parameters = config["edgeR_parameters"],
     threads: config.get("threads", 1)
     resources:
         mem_mb=config.get("mem", "16000"),
@@ -24,6 +26,7 @@ rule norm_cqn:
     input:
         filtered_counts = os.path.join(result_path,'{split}','filtered.csv'),
         annotation = os.path.join(result_path,'{split}','annotation.csv'),
+        feature_annotation = config["feature_annotation"] if config["feature_annotation"]!="" else [],
     output:
         normalized_counts = os.path.join(result_path,'{split}','normCQN.csv'),
         cqn_plot = report(os.path.join(result_path,'{split}','plots','normCQN_QRfit.png'),
@@ -36,6 +39,7 @@ rule norm_cqn:
                           }),
     params:
         split = lambda w: "{}".format(w.split),
+        cqn_parameters = config["cqn_parameters"],
     threads: config.get("threads", 1)
     resources:
         mem_mb=config.get("mem", "16000"),
