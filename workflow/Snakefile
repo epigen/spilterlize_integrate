@@ -60,8 +60,8 @@ if len(integration_data)>0:
     transformed_data = [method+"_HVF" for method in integration_data]
 elif len(norm_methods)>0:
     transformed_data = [method+"_HVF" for method in norm_methods]
-else:
-    transformed_data = ['filtered']
+# else:
+#     transformed_data = ['filtered']
 # print(transformed_data)
 
 # visualization data
