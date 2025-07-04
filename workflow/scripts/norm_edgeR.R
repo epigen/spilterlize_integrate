@@ -19,7 +19,7 @@ norm_parameters <- snakemake@params[["norm_parameters"]]
 data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
 
 # load subset feature annotation, if provided
-if(feature_annotation_path!=""){
+if(length(feature_annotation_path)!=0){
     feature_annotation <- data.frame(fread(file.path(feature_annotation_path), header=TRUE), row.names=1)
     feature_annotation <- feature_annotation[rownames(data),]
 }
@@ -40,7 +40,7 @@ for(method in norm_parameters[["method"]]){
                                    )
 
     # quantification
-    if (norm_parameters[["quantification"]]=="RPKM" & feature_annotation_path!=""){
+    if (norm_parameters[["quantification"]]=="RPKM" & length(feature_annotation_path)!=0){
         # determine (log2) RPKM values
         norm_data <- rpkm(dge_tmp,
                           gene.length = feature_annotation[[norm_parameters[["gene.length"]]]],
