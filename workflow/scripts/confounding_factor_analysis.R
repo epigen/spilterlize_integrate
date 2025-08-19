@@ -12,6 +12,7 @@ annot_path <- snakemake@input[["annotation"]]
 
 # output
 plot_path <- snakemake@output[["cfa_plot"]]
+cfa_results_path <- snakemake@output[["cfa_results"]]
 
 # load data
 annot <- data.frame(fread(file.path(annot_path), header=TRUE), row.names=1)
@@ -108,3 +109,4 @@ heigth_hm <- nrow(mat) * 0.2 + 2
 # cfa_plot
 
 ggsave(plot_path, cfa_plot, width=heigth_hm, height=heigth_hm, dpi = 300)
+write.csv(df_long, file=cfa_results_path, row.names=TRUE)
