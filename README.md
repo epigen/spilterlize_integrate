@@ -126,7 +126,7 @@ The workflow performs the following steps to produce the outlined results:
     - Boxplots of log-normalized counts per sample colored by sample or configured annotation column.
     - Principal Component Analysis (PCA) plots, with samples colored by up to two annotation columns (e.g., batch and treatment).
   - Confounding Factor Analysis to inform integration and downstream modeling (`*CFA.png`)
-    - Quantification of statistical association among metadata (`CFA.png`) and between provided metadata and (up to) the first ten principal components (`*_CFA.png`).
+    - Quantification of statistical association among metadata (`CFA.png` and `CFA.csv`), and between provided metadata and principal components (associations with up to the first ten PCs visualized in `*_CFA.png`, and for PCs up to 95% of cumulative variance saved in `*_CFA.csv`).
     - Categorical-categorical associations are tested using Fisher's exact test, which is suitable for small sample sizes/low cell counts (e.g., 3 replicates per condition). P-values were computed using Monte Carlo simulation (B = 10,000) for efficiency.
     - Categorical-continuous associations are tested using the non-parametric Kruskal-Wallis test, which is broadly applicable due to relaxed requirements and assumptions.
     - Continuous-continuous associations are tested using rank-based Kendall's Tau correlation, which is suitable for "small" data sets with many ties and is robust to outliers.
