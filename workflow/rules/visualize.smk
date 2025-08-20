@@ -12,7 +12,7 @@ rule plot_cfa:
                           "name": "annotation",
                           "type": "confounding factor analysis plot"
                       }),
-        cfa_results = os.path.join(result_path,'{split}','CFA.csv'),
+        cfa_results = os.path.join(result_path,'{split}','plots','CFA.csv'),
     threads: config.get("threads", 1)
     resources:
         mem_mb=config.get("mem", "16000"),
@@ -45,7 +45,7 @@ rule plot_diagnostics:
                           "name": "{label}",
                           "type": "confounding factor analysis plot"
                       }),
-        cfa_results = os.path.join(result_path,'{split}','{label}_CFA.csv'),
+        cfa_results = os.path.join(result_path,'{split}','plots','{label}_CFA.csv'),
     threads: config.get("threads", 1)
     resources:
         mem_mb=config.get("mem", "16000"),
