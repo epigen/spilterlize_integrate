@@ -16,6 +16,7 @@ annot_path <- snakemake@input[["annotation"]]
 # output
 plot_path <- snakemake@output[["diag_plot"]]
 cfa_plot_path <- snakemake@output[["cfa_plot"]]
+cfa_results_path <- snakemake@output[["cfa_results"]]
 
 # parameters
 annot_vars <- snakemake@config[["visualization_parameters"]][["annotate"]]
@@ -121,7 +122,7 @@ ggsave(plot_path, figure, width=8, height=12, dpi = 300)
 
 # don't save all PCs since very low var PCs are mostly noise and waste of storage space
 # filesize like this is not a problem since we only have a metadata x PCs matrix -> kilobytes
-pc_n <- which(cumsum(var_explained) >= 0.95)[1]
+pc_n <- min(max(which(cumsum(var_explained) >= 0.95)[1], 10), ncol(pca$x))
 print(paste("Number of PCs to keep:", pc_n))
 pc_data <- data.frame(pca$x[, 1:pc_n])
 
@@ -193,7 +194,7 @@ colnames(p_values_adjusted) <- colnames(p_values)
 log_p_values <- -log10(p_values_adjusted)
 
 # Add variance explained to column names for plotting, and keep only first 10 PCs
-log_p_values_for_plot <- log_p_values[, 1:10]
+log_p_values_for_plot <- log_p_values[, 1:pc_n]
 colnames(log_p_values_for_plot) <- paste0("PC", 1:pc_n, "\n(", var_explained_percent, "%)")
 
 # Melt the data for ggplot
