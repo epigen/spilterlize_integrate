@@ -16,6 +16,7 @@ annot_path <- snakemake@input[["annotation"]]
 # output
 plot_path <- snakemake@output[["diag_plot"]]
 cfa_plot_path <- snakemake@output[["cfa_plot"]]
+cfa_results_path <- snakemake@output[["cfa_results"]]
 
 # parameters
 annot_vars <- snakemake@config[["visualization_parameters"]][["annotate"]]
@@ -119,15 +120,14 @@ ggsave(plot_path, figure, width=8, height=12, dpi = 300)
 
 #### CONFOUNDING FACTOR ANALYSIS PLOT ####
 
-# Determine first ten PCs
-pc_n <- min(dim(pca$x)[2], 10)
+# don't save all PCs since very low var PCs are mostly noise and waste of storage space
+# filesize like this is not a problem since we only have a metadata x PCs matrix -> kilobytes
+pc_n <- min(max(which(cumsum(var_explained) >= 0.95)[1], 10), ncol(pca$x))
+print(paste("Number of PCs to keep:", pc_n))
 pc_data <- data.frame(pca$x[, 1:pc_n])
 
 # Calculate percentage variance explained
 var_explained_percent <- round(var_explained[1:pc_n] * 100, 1)
-
-# Add variance explained to column names
-colnames(pc_data) <- paste0("PC", 1:pc_n, "\n(", var_explained_percent, "%)")
 
 # Remove metadata without variation
 annot <- annot[, apply(annot, 2, function(x) { length(unique(na.omit(x))) > 1 })]
@@ -153,7 +153,7 @@ if (ncol(numeric_metadata)>0){
         })
     })
     
-    # ensure martix
+    # ensure matrix
     p_values_numeric <- matrix(p_values_numeric, nrow = ncol(numeric_metadata), ncol = ncol(pc_data))
     rownames(p_values_numeric) <- colnames(numeric_metadata)
     colnames(p_values_numeric) <- colnames(pc_data)
@@ -193,12 +193,22 @@ colnames(p_values_adjusted) <- colnames(p_values)
 # Transform p-values to -log10(p-values)
 log_p_values <- -log10(p_values_adjusted)
 
+# save p-values and var_explained table
+cfa_results <- rbind(var_explained, log_p_values)
+write.csv(cfa_results, file=cfa_results_path, row.names=TRUE)
+print(paste("Results saved to", cfa_results_path))
+
+# Add variance explained to column names for plotting, and keep only first 10 PCs
+pc_n_plot <- min(10, pc_n)
+log_p_values_for_plot <- log_p_values[, 1:pc_n_plot]
+colnames(log_p_values_for_plot) <- paste0("PC", 1:pc_n_plot, "\n(", var_explained_percent[1:pc_n_plot], "%)")
+
 # Melt the data for ggplot
-log_p_values_melted <- reshape2::melt(log_p_values, varnames = c("Metadata", "PC"))
+log_p_values_melted <- reshape2::melt(log_p_values_for_plot, varnames = c("Metadata", "PC"))
                        
 # Perform hierarchical clustering on the rows (metadata)
-hclust_rows <- hclust(dist(log_p_values))
-ordered_metadata <- rownames(log_p_values)[hclust_rows$order]
+hclust_rows <- hclust(dist(log_p_values_for_plot))
+ordered_metadata <- rownames(log_p_values_for_plot)[hclust_rows$order]
 log_p_values_melted$Metadata <- factor(log_p_values_melted$Metadata, levels = ordered_metadata)
                        
 # Create a new column in log_p_values_melted to annotate metadata as numeric or categorical
@@ -223,8 +233,8 @@ cfa_plot <- ggplot(log_p_values_melted, aes(x = PC, y = Metadata, fill = value))
                             ) 
 
 # determine plot size
-heigth_hm <- dim(p_values)[1] * 0.2 + 1
-width_hm <- dim(p_values)[2] * 0.75 + 1
+heigth_hm <- dim(log_p_values_for_plot)[1] * 0.2 + 1
+width_hm <- dim(log_p_values_for_plot)[2] * 0.75 + 1
                        
 # save plot
 # options(repr.plot.width = width_hm, repr.plot.height = heigth_hm)
