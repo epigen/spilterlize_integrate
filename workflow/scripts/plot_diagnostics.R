@@ -193,9 +193,15 @@ colnames(p_values_adjusted) <- colnames(p_values)
 # Transform p-values to -log10(p-values)
 log_p_values <- -log10(p_values_adjusted)
 
+# save p-values and var_explained table
+cfa_results <- rbind(var_explained, log_p_values)
+write.csv(cfa_results, file=cfa_results_path, row.names=TRUE)
+print(paste("Results saved to", cfa_results_path))
+
 # Add variance explained to column names for plotting, and keep only first 10 PCs
-log_p_values_for_plot <- log_p_values[, 1:pc_n]
-colnames(log_p_values_for_plot) <- paste0("PC", 1:pc_n, "\n(", var_explained_percent, "%)")
+pc_n_plot <- min(10, pc_n)
+log_p_values_for_plot <- log_p_values[, 1:pc_n_plot]
+colnames(log_p_values_for_plot) <- paste0("PC", 1:pc_n_plot, "\n(", var_explained_percent[1:pc_n_plot], "%)")
 
 # Melt the data for ggplot
 log_p_values_melted <- reshape2::melt(log_p_values_for_plot, varnames = c("Metadata", "PC"))
@@ -235,10 +241,3 @@ width_hm <- dim(log_p_values_for_plot)[2] * 0.75 + 1
 # cfa_plot
 
 ggsave(cfa_plot_path, cfa_plot, width=width_hm, height=heigth_hm, dpi = 300)
-
-# save p-values and var_explained
-cfa_results <- rbind(log_p_values, var_explained)
-
-# save cfa_results
-write.csv(cfa_results, file=cfa_results_path, row.names=TRUE)
-print(paste("Results saved to", cfa_results_path))
