@@ -79,6 +79,8 @@ voom_parameters:
 # limma::removeBatchEffect -> https://rdrr.io/bioc/limma/man/removeBatchEffect.html
 # use case: remove unwanted (batch) effects from data, while desired effects are preserved, prior to downstream analyses e.g., dimensionality reduction with PCA/UMAP
 # to skip leave desired empty i.e., []
+# If you specify a column/variable in desired, unwanted_categorical or unwanted_numerical
+# that is *not present* in a particular data split it will be ignored silently.
 removeBatchEffect_parameters:
     norm_methods: ["CQN", "TMM"] # list of normalization outputs to be integrated; have to be configured above; options: "TMM","TMMwsp","RLE","upperquartile","CPM","RPKM","CQN","VOOM"
     desired: [] # list of the column names of desired variation in annotation
