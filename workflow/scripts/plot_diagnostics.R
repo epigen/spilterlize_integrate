@@ -27,6 +27,15 @@ label <- snakemake@wildcards[["label"]]
 data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
 annot <- data.frame(fread(file.path(annot_path), header=TRUE), row.names=1)
 
+# Convert numerical metadata with fewer than 25 unique values to factor AND ensure all categorical metadata are factors
+annot <- as.data.frame(lapply(annot, function(x) {
+  if ((is.numeric(x) && length(unique(x)) <= 25 && nrow(annot) > 25) || !is.numeric(x)) {
+    return(factor(x))
+  } else {
+    return(x)
+  }
+}))
+
 # need to handle empty data, e.g. if no HVFs
 if (nrow(data) == 0) {
     error_message <- paste("Input data is empty!",
@@ -151,15 +160,6 @@ var_explained_percent <- round(var_explained[1:pc_n] * 100, 1)
 
 # Remove metadata without variation
 annot <- annot[, apply(annot, 2, function(x) { length(unique(na.omit(x))) > 1 })]
-
-# Convert numerical metadata with fewer than 25 unique values to factor AND ensure all categorical metadata are factors
-annot <- as.data.frame(lapply(annot, function(x) {
-  if ((is.numeric(x) && length(unique(x)) <= 25 && nrow(annot) > 25) || !is.numeric(x)) {
-    return(factor(x))
-  } else {
-    return(x)
-  }
-}))
 
 # Split metadata into numeric and categorical
 numeric_metadata <- annot[sapply(annot, is.numeric)]
