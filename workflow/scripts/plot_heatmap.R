@@ -4,6 +4,7 @@ library("circlize")
 library("RColorBrewer")
 library("data.table")
 library("fastcluster")
+library("ggplot2") # for error images
 
 ### configurations
 set.seed(42)
@@ -24,6 +25,26 @@ label <- snakemake@wildcards[["label"]]
 ### load data
 data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
 metadata <- data.frame(fread(file.path(metadata_path), header=TRUE), row.names=1)
+
+# need to handle empty data, e.g. if no HVFs
+if (nrow(data) == 0) {
+    error_message <- paste("Input data is empty!",
+                           "Most likely you have no HVFs, check your config under 'hvf_parameters'.",
+                           sep = "\n")
+
+    # Create a ggplot object that displays the error message
+    error_plot <- ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = error_message, size = 5, color = "darkred", fontface="bold") +
+      theme_void() +
+      labs(title = "Data Processing Error") +
+      theme(plot.title = element_text(hjust = 0.5, size = 18, face = "bold"))
+
+    ggsave(hm_clustered_path, error_plot, width=8, height=12, dpi = 300)
+    ggsave(hm_sorted_path, error_plot, width=8, height=6, dpi = 300)
+
+    message(error_message)
+    quit(save = "no", status = 0)
+}
 
 # raw counts have to be log-normalized
 if (label=="counts" | label=="filtered"){
