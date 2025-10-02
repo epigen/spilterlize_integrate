@@ -6,6 +6,21 @@
 import os
 import pandas as pd
 
+#### helper functions
+def drop_all_zero(data: pd.DataFrame, annotation: pd.DataFrame):
+    
+    # align data with annotion
+    d = data.loc[:, annotation.index]
+    # drop all-zero columns (samples)
+    col_mask = (d != 0).any(axis=0)
+    d = d.loc[:, col_mask]
+    a = annotation.loc[d.columns]
+    # Drop all-zero rows (features)
+    row_mask = (d != 0).any(axis=1)
+    d = d.loc[row_mask, :]
+
+    return d,a
+
 #### configurations
 
 # input
@@ -24,14 +39,24 @@ annotation = pd.read_csv(annotation_path, index_col=0)
 # split and save count and annotation data
 for split_var in split_by:
     if split_var == "all":
-        data.loc[:, annotation.index].to_csv(os.path.join(result_path,"all","counts.csv"))
-        annotation.to_csv(os.path.join(result_path,"all","annotation.csv"))
+        # drop all zero columns (samples) and rows (features)
+        d, a = drop_all_zero(data, annotation)
+        
+        # save cleaned split
+        d.to_csv(os.path.join(result_path,"all","counts.csv"))
+        a.to_csv(os.path.join(result_path,"all","annotation.csv"))
+        
     
     if split_var in annotation.columns:
         for split in annotation[split_var].unique():
+
+            # split annotation
+            annotation_split = annotation.loc[annotation[split_var]==split, :]
             
-            # split & save counts
-            data.loc[:, annotation[(annotation[split_var]==split)].index].to_csv(os.path.join(result_path,f"{split_var}_{split}","counts.csv"))
-    
-            # split & save annotations
-            annotation.loc[annotation[split_var]==split, :].to_csv(os.path.join(result_path,f"{split_var}_{split}","annotation.csv"))
+            # drop all zero columns (samples) and rows (features)
+            d, a = drop_all_zero(data, annotation_split)
+
+            # save cleaned split
+            d.to_csv(os.path.join(result_path,f"{split_var}_{split}","counts.csv"))
+            a.to_csv(os.path.join(result_path,f"{split_var}_{split}","annotation.csv"))
+            
