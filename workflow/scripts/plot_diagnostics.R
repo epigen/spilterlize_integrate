@@ -24,8 +24,8 @@ split <- snakemake@wildcards[["split"]]
 label <- snakemake@wildcards[["label"]]
 
 ### load data
-data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
-annot <- data.frame(fread(file.path(annot_path), header=TRUE), row.names=1)
+data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1, check.names=FALSE)
+annot <- data.frame(fread(file.path(annot_path), header=TRUE), row.names=1, check.names=FALSE)
 
 # Convert numerical metadata with fewer than 25 unique values to factor AND ensure all categorical metadata are factors
 annot <- as.data.frame(lapply(annot, function(x) {
@@ -130,13 +130,18 @@ pca_data <- data.frame(sample=colnames(data), pca$x[colnames(data),c('PC1','PC2'
 pca_p <- list()
 
 for (var in annot_vars){    
-    pca_p[[var]] <- ggplot(pca_data, aes_string(x="PC1", y="PC2", color=var)) +
+    p <- ggplot(pca_data, aes_string(x="PC1", y="PC2", color=var)) +
         geom_point() +
         labs(x=paste0("Principal Component 1 (", round(var_explained[1] * 100, 2), "%)"),
              y=paste0("Principal Component 2 (", round(var_explained[2] * 100, 2), "%)"),
              title="Principal Component Analysis"
             ) +
         theme_minimal()
+
+    if (length(unique(na.omit(pca_data[[var]]))) > 15) {
+        p <- p + theme(legend.position = "none")
+    }
+    pca_p[[var]] <- p
 }
 
 # Combine all plots into one figure
@@ -259,7 +264,4 @@ heigth_hm <- dim(log_p_values_for_plot)[1] * 0.2 + 1
 width_hm <- dim(log_p_values_for_plot)[2] * 0.75 + 1
                        
 # save plot
-# options(repr.plot.width = width_hm, repr.plot.height = heigth_hm)
-# cfa_plot
-
 ggsave(cfa_plot_path, cfa_plot, width=width_hm, height=heigth_hm, dpi = 300)
