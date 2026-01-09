@@ -15,7 +15,7 @@ plot_path <- snakemake@output[["cfa_plot"]]
 cfa_results_path <- snakemake@output[["cfa_results"]]
 
 # load data
-annot <- data.frame(fread(file.path(annot_path), header=TRUE), row.names=1)
+annot <- data.frame(fread(file.path(annot_path), header=TRUE), row.names=1, check.names=FALSE)
 
 # Remove metadata without variation
 annot <- annot[, apply(annot, 2, function(x) { length(unique(na.omit(x))) > 1 })]
@@ -27,7 +27,7 @@ annot <- as.data.frame(lapply(annot, function(x) {
   } else {
     return(x)
   }
-}))
+}), check.names=FALSE)
 
 # perform pairwise statistical association testing between all annotation variables
 p_values <- data.frame(var1=character(), var2=character(), p_value=numeric(), stringsAsFactors=FALSE)

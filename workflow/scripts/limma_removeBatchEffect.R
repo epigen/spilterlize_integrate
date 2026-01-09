@@ -20,8 +20,8 @@ unwanted_categorical_cols <- snakemake@params[["unwanted_categorical"]]
 unwanted_numerical_cols <- snakemake@params[["unwanted_numerical"]]
 
 # load data
-data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
-annot <- data.frame(fread(file.path(annot_path), header=TRUE), row.names=1)
+data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1, check.names=FALSE)
+annot <- data.frame(fread(file.path(annot_path), header=TRUE), row.names=1, check.names=FALSE)
 
 # We can only integrate data for splits where the desired_cols have more than one level.
 # This allows desired_cols to be over-specified in the config and impossible cols are dropped.

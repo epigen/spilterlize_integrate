@@ -18,8 +18,8 @@ filter_parameters <- snakemake@params[["filter_parameters"]]
 ### load data
 # data <- read.csv(file=file.path(data_path), row.names=1)
 # annot <- read.csv(file=file.path(annotation_path), row.names=1)
-data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
-annot <- data.frame(fread(file.path(annotation_path), header=TRUE), row.names=1)
+data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1, check.names=FALSE)
+annot <- data.frame(fread(file.path(annotation_path), header=TRUE), row.names=1, check.names=FALSE)
 
 # set group variable
 if(filter_parameters[["group"]]!="NULL"){

@@ -35,7 +35,8 @@ annot <- as.data.frame(lapply(annot, function(x) {
     return(x)
   }
 }),
-    row.names = rownames(annot)
+    row.names = rownames(annot),
+    check.names = FALSE
 )
 
 # need to handle empty data, e.g. if no HVFs
@@ -125,12 +126,12 @@ pca <- prcomp(t(data), center = TRUE, scale. = TRUE)
 # Get variance explained by each PC
 var_explained <- pca$sdev^2 / sum(pca$sdev^2)
 # Prepare plotting dataframe
-pca_data <- data.frame(sample=colnames(data), pca$x[colnames(data),c('PC1','PC2')], annot[colnames(data), annot_vars])
+pca_data <- data.frame(sample=colnames(data), pca$x[colnames(data),c('PC1','PC2')], annot[colnames(data), annot_vars], check.names=FALSE)
 
 pca_p <- list()
 
 for (var in annot_vars){    
-    p <- ggplot(pca_data, aes_string(x="PC1", y="PC2", color=var)) +
+    p <- ggplot(pca_data, aes(x=PC1, y=PC2, color=.data[[var]])) +
         geom_point() +
         labs(x=paste0("Principal Component 1 (", round(var_explained[1] * 100, 2), "%)"),
              y=paste0("Principal Component 2 (", round(var_explained[2] * 100, 2), "%)"),

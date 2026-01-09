@@ -20,9 +20,9 @@ split <- snakemake@params[["split"]]
 norm_parameters <- snakemake@params[["cqn_parameters"]]
 
 ### load data
-data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
-annot <- data.frame(fread(file.path(annot_path), header=TRUE), row.names=1)
-feature_annotation <- data.frame(fread(file.path(feature_annotation_path), header=TRUE), row.names=1)
+data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1, check.names=FALSE)
+annot <- data.frame(fread(file.path(annot_path), header=TRUE), row.names=1, check.names=FALSE)
+feature_annotation <- data.frame(fread(file.path(feature_annotation_path), header=TRUE), row.names=1, check.names=FALSE)
 
 # subset feature annotation
 feature_annotation <- feature_annotation[rownames(data),]

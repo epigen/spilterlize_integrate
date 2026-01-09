@@ -23,7 +23,7 @@ voom_parameters <- snakemake@config[["voom_parameters"]]
 
 ### load data
 # data <- read.csv(file=file.path(data_path), row.names=1)
-data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
+data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1, check.names=FALSE)
 
 # calculate normalization factors (normalized library size factors) if configured
 dge <- DGEList(data)

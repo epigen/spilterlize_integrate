@@ -23,8 +23,8 @@ metadata_cols <- c(snakemake@config[["visualization_parameters"]][["annotate"]])
 label <- snakemake@wildcards[["label"]]
 
 ### load data
-data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1)
-metadata <- data.frame(fread(file.path(metadata_path), header=TRUE), row.names=1)
+data <- data.frame(fread(file.path(data_path), header=TRUE), row.names=1, check.names=FALSE)
+metadata <- data.frame(fread(file.path(metadata_path), header=TRUE), row.names=1, check.names=FALSE)
 
 # need to handle empty data, e.g. if no HVFs
 if (nrow(data) == 0) {
